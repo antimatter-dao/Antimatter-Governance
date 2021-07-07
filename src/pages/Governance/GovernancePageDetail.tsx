@@ -25,6 +25,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import { getDeltaTime, Timer } from 'components/Timer/intex'
+import { Dots } from 'components/swap/styleds'
 
 enum VoteOption {
   FOR = 'for',
@@ -250,46 +251,46 @@ export default function GovernancePageDetail({
 
   const btnStatus = useMemo(() => {
     const ret = {
-      text: 'submit',
+      text: <>submit</>,
       event: () => {},
       disable: false
     }
     if (data.status === StatusOption.Faild || data.status === StatusOption.Success) {
-      ret.text = 'Voting has ended'
+      ret.text = <>Voting has ended</>
       ret.disable = true
       return ret
     }
     if (!chainId) {
-      ret.text = 'Connect wallet'
+      ret.text = <>Connect wallet</>
       ret.disable = true
       return ret
     }
     if (chainId !== FACTORY_CHAIN_ID) {
-      ret.text = 'Please switch to ETH chain'
+      ret.text = <>Please switch to ETH chain</>
       ret.disable = true
       return ret
     }
 
     if (!inputValue || (inputValue && !inputValue.greaterThan(JSBI.BigInt(0)))) {
-      ret.text = 'Please input amount'
+      ret.text = <>Please input amount</>
       ret.disable = true
       return ret
     }
 
     if (!enoughBalance) {
-      ret.text = 'Insufficient Balance'
+      ret.text = <>Insufficient Balance</>
       ret.disable = true
       return ret
     }
 
     if (approval !== ApprovalState.APPROVED) {
       ret.event = approveCallback
-      ret.text = approval === ApprovalState.PENDING ? 'Approving' : 'Approve'
+      ret.text = approval === ApprovalState.PENDING ? <>Allow Amitmatter to use your Matter<Dots>Loading</Dots></> : <>Allow Amitmatter to use your Matter</>
       ret.disable = !!(approval === ApprovalState.PENDING)
       return ret
     }
 
-    ret.text = 'submit'
+    ret.text = <>submit</>
     ret.event = handleSubmit
     ret.disable = false
     return ret

@@ -154,10 +154,14 @@ export default function GovernanceProposalCreation({
       return
     }
 
+    const _span = activeStep!==10 ?
+      JSBI.BigInt((activeStep + 3)*60*60*24).toString() :
+      JSBI.BigInt(5*60).toString() 
+
     const args = [
       input.title,
       `{"summary":"${input.summary}","details":"${input.details}","agreeFor":"${input.agreeFor}","againstFor":"${input.againstFor}"}`,
-      JSBI.BigInt((activeStep + 3)*60*60*24).toString(),
+      _span,
       tryParseAmount(JSBI.BigInt(stakeAmount).toString(), chainId ? new Token(chainId, testCoin, 18) : undefined)?.raw.toString()
     ]
 
@@ -248,7 +252,7 @@ export default function GovernanceProposalCreation({
               </ButtonPrimary>
             </AutoColumn>
           </form>
-          {notEnoughBalance && <Warning>You must have {stakeAmount + 100000} MATTER to create a proposal</Warning>}
+          {notEnoughBalance && <Warning>You must have 100000 MATTER to create a proposal</Warning>}
         </Wrapper>
       </StaticOverlay>
     </>
@@ -326,6 +330,10 @@ function GovernanceTimeline({
             </Step>
           )
         })}
+        {/* test */}
+        <Step key={10} active={activeStep === 10} className={classes.step} disabled={disabled}>
+          <StepButton onClick={onStep(10)}>5 mins</StepButton>
+        </Step>
       </Stepper>
       <div></div>
     </div>
