@@ -148,7 +148,7 @@ export default function GovernancePageDetail({
       .then((response: TransactionResponse) => {
         setAttemptingTxn(false)
         addTransaction(response, {
-          summary: 'vote claim'
+          summary: `claim ${toNumber(userStaking.totalStake)} Matter`
         })
 
         setTxHash(response.hash)
@@ -181,7 +181,7 @@ export default function GovernancePageDetail({
       .then((response: TransactionResponse) => {
         setAttemptingTxn(false)
         addTransaction(response, {
-          summary: 'vote'
+          summary: `vote ${selected} ${voteValue} Matter`
         })
         setVoteValue('')
 
@@ -193,7 +193,7 @@ export default function GovernancePageDetail({
           console.error('---->', error)
         }
       })
-  }, [contact, inputValue, governanceIndex, addTransaction, selected])
+  }, [contact, inputValue, governanceIndex, addTransaction, selected, voteValue])
 
   const handleBackClick = useCallback(() => history.push('/governance'), [history])
 

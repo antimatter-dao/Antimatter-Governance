@@ -59,7 +59,7 @@ export function useGovernanceDetails(index: string) {
         : resultRes.result.toString() === '2'
         ? StatusOption.Failed
         : StatusOption.Live
-      : StatusOption.Failed
+      : StatusOption.Live
   }
 
   return { data: ret, loading: proposesRes.loading }
@@ -100,7 +100,7 @@ export function useGovernanceList(): { list: GovernanceData[] | undefined; loadi
           const details: string = result ? JSON.parse(result?.content).details : ''
           const agreeFor: string = result ? JSON.parse(result?.content).agreeFor : ''
           const againstFor: string = result ? JSON.parse(result?.content).againstFor : ''
-          let status: StatusOption = StatusOption.Failed
+          let status: StatusOption = StatusOption.Live
           if (proposesStatusRes && proposesStatusRes[index] && proposesStatusRes[index].result) {
             const _status = proposesStatusRes[index].result ?? '2'
             status =

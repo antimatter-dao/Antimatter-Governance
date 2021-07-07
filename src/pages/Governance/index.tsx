@@ -183,9 +183,19 @@ function GovernanceCard({
   data: GovernanceData
   onClick: () => void
 }) {
+  const [hover, setHover] = useState(false);
+  const handleEnter = () => {
+    setHover(true);
+  }
+
+  const handleLeave = () => {
+    setHover(false);
+  }
+
   return (
     <AppBody maxWidth="340px" gradient1={true} isCard style={{ cursor: 'pointer' }}>
-      <AutoColumn gap="16px" onClick={onClick}>
+      <AutoColumn gap="16px" onClick={onClick} onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}>
         <RowBetween>
           <Live color={'Success' === status ? '#728AE0' : 'Failed' === status ? '#FF0000' : ''}>{status}</Live>
           <TYPE.smallGray>#{id}</TYPE.smallGray>
@@ -213,7 +223,8 @@ function GovernanceCard({
         </AutoColumn>
         <DividerThin />
         <TYPE.small fontWeight={500} style={{ textAlign: 'center', margin: '-4px 0 -10px' }}>
-          Time left : <Timer timer={+timeLeft} onZero={() => {}} />
+          {hover ? 'show info' : 
+          (<>Time left : <Timer timer={+timeLeft} onZero={() => {}} /></>)}
         </TYPE.small>
       </AutoColumn>
     </AppBody>
