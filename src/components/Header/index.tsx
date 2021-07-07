@@ -1,7 +1,7 @@
 import { ChainId, TokenAmount } from '@uniswap/sdk'
 import React from 'react'
 import { Check, ChevronDown } from 'react-feather'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
 import { darken } from 'polished'
@@ -9,7 +9,7 @@ import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
 import { useAggregateUniBalance } from '../../state/wallet/hooks'
 import { ExternalLink, TYPE } from '../../theme'
-import Row, { RowFixed, RowBetween } from '../Row'
+import { RowFixed, RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
 import usePrevious from '../../hooks/usePrevious'
@@ -172,16 +172,6 @@ const HeaderRow = styled(RowFixed)`
   `};
 `
 
-const HeaderLinks = styled(Row)`
-  justify-content: center;
-  width: auto;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    padding: 1rem 0 1rem 1rem;
-    justify-content: flex-end;
-    display: none
-`};
-`
-
 const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
@@ -276,65 +266,6 @@ const NetworkCard = styled.div<{ color?: string }>`
 
 `
 
-const activeClassName = 'ACTIVE'
-
-const StyledNavLink = styled(NavLink).attrs({
-  activeClassName
-})`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: left;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme }) => theme.text3};
-  font-size: 14px;
-  width: fit-content;
-  margin: 0 20px;
-  font-weight: 400;
-  padding: 10px 0 27px;
-  white-space: nowrap;
-  transition: 0.5s;
-  &.${activeClassName} {
-    color: ${({ theme }) => theme.primary1};
-    border-bottom: 1px solid ${({ theme }) => theme.primary1};
-  }
-
-  :hover,
-  :focus {
-    color: ${({ theme }) => darken(0.1, theme.primary1)};
-  }
-`
-
-const StyledDropdown = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: ${({ theme }) => theme.text3};
-  font-size: 14px;
-  width: fit-content;
-  margin: 0 20px;
-  font-weight: 400;
-  padding: 10px 0 27px;
-  transition: 0.5s;
-  position: relative;
-  svg {
-    margin-left: 5px;
-  }
-  :hover,
-  :focus {
-    color: ${({ theme }) => darken(0.1, theme.primary1)};
-    svg {
-      transform: rotate(180deg);
-    }
-    & > div {
-      top: 40px;
-      height: auto;
-      border: 1px solid ${({ theme }) => theme.text5};
-    }
-  }
-`
 const Dropdown = styled.div`
   z-index: 3;
   height: 0;
@@ -431,7 +362,7 @@ const MobileHeader = styled.header`
   position:fixed;
   top: 0;
   left: 0;
-  z-index: 100
+  z-index: 100;
   display: none;
   ${({ theme }) => theme.mediaWidth.upToLarge`
     display: inherit
@@ -440,7 +371,6 @@ const MobileHeader = styled.header`
 
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
-  const { pathname } = useLocation()
 
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
@@ -454,51 +384,6 @@ export default function Header() {
         <Link to={'/'}>
           <StyledLogo />
         </Link>
-        {!pathname.startsWith('/governance') && (
-          <HeaderLinks>
-            {tabs.map(({ title, route, subTab }) => {
-              if (subTab) {
-                return (
-                  <StyledDropdown key={title}>
-                    {title}
-                    <ChevronDown size={15} />
-                    <Dropdown>
-                      {subTab.map(({ title, route, link, titleContent }) => {
-                        return link ? (
-                          <ExternalLink href={link} key={title}>
-                            {titleContent ?? title}
-                          </ExternalLink>
-                        ) : route ? (
-                          <NavLink to={route} key={title}>
-                            {titleContent ?? title}
-                          </NavLink>
-                        ) : null
-                      })}
-                    </Dropdown>
-                  </StyledDropdown>
-                )
-              }
-              if (route === 'option_exercise') {
-                return (
-                  <StyledNavLink
-                    key={route}
-                    to={`/${route}`}
-                    isActive={(match, { pathname }) =>
-                      Boolean(match) || pathname.startsWith('/generate') || pathname.startsWith('/redeem')
-                    }
-                  >
-                    {title}
-                  </StyledNavLink>
-                )
-              }
-              return (
-                <StyledNavLink id={`stake-nav-link`} to={'/' + route} key={route}>
-                  {title}
-                </StyledNavLink>
-              )
-            })}
-          </HeaderLinks>
-        )}
         <div style={{ paddingLeft: 8, display: 'flex', alignItems: 'center', marginLeft: 'auto', marginRight: '2rem' }}>
           <HeaderControls>
             <HeaderElement show={!!account}>

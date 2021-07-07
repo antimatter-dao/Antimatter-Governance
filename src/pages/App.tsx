@@ -34,7 +34,6 @@ import Redeem from './Redeem'
 // import ComingSoon from './ComingSoon'
 import Info from './Info'
 // import MatterRedemption from './MatterToken/MatterRedemption'
-import WelcomeSlider from 'components/WelcomeSlider'
 import FAQ from './FAQ'
 import OptionTrade from './OptionTrade'
 import OptionCreation from './OptionCreation'
@@ -115,12 +114,12 @@ export default function App() {
           <BodyWrapper id="body">
             <Popups />
             <Polling />
-            <WelcomeSlider />
             {/* <WarningModal /> */}
             {/* <TopLevelModals /> */}
             <Web3ReactManager>
               <Switch>
                 {/* <Route exact strict path="/option_trading" component={Swap} /> */}
+                <Route exact strict path="/" component={Governance} />
                 <Route exact strict path="/option_creation" component={OptionCreation} />
                 <Route exact strict path="/option_trading" component={OptionTrade} />
                 <Route exact strict path="/option_trading/:addressA/:addressB" component={OptionTrade} />
