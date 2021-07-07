@@ -34,7 +34,7 @@ enum VoteOption {
 enum StatusOption {
   Live = 'Live',
   Success = 'Success',
-  Faild = 'Faild'
+  Failed = 'Failed'
 }
 
 const Wrapper = styled.div`
@@ -143,16 +143,19 @@ export default function GovernancePageDetail({
     }
     setAttemptingTxn(true)
     const args = [governanceIndex]
-    contact.unStaking(...args, {}).then((response: TransactionResponse) => {
-      setAttemptingTxn(false)
-      addTransaction(response, {
-        summary: 'vote claim'
-      })
+    contact
+      .unStaking(...args, {})
+      .then((response: TransactionResponse) => {
+        setAttemptingTxn(false)
+        addTransaction(response, {
+          summary: 'vote claim'
+        })
 
-      setTxHash(response.hash)
-    }).catch((error: any)=>{
-      setAttemptingTxn(false)
-    })
+        setTxHash(response.hash)
+      })
+      .catch((error: any) => {
+        setAttemptingTxn(false)
+      })
   }, [contact, data, governanceIndex, addTransaction])
 
   function calcVoteForPercentage(type: VoteOption, voteFor: string | number, voteAgainst: string | number): string {
@@ -172,20 +175,23 @@ export default function GovernancePageDetail({
 
     setAttemptingTxn(true)
 
-    contact.vote(...args, {}).then((response: TransactionResponse) => {
-      setAttemptingTxn(false)
-      addTransaction(response, {
-        summary: 'vote'
-      })
-      setVoteValue('')
+    contact
+      .vote(...args, {})
+      .then((response: TransactionResponse) => {
+        setAttemptingTxn(false)
+        addTransaction(response, {
+          summary: 'vote'
+        })
+        setVoteValue('')
 
-      setTxHash(response.hash)
-    }).catch((error: any)=>{
-      setAttemptingTxn(false)
-      if (error?.code !== 4001) {
-        console.error('---->', error)
-      }
-    })
+        setTxHash(response.hash)
+      })
+      .catch((error: any) => {
+        setAttemptingTxn(false)
+        if (error?.code !== 4001) {
+          console.error('---->', error)
+        }
+      })
   }, [contact, inputValue, governanceIndex, addTransaction, selected])
 
   const handleBackClick = useCallback(() => history.push('/governance'), [history])
@@ -263,7 +269,7 @@ export default function GovernancePageDetail({
       event: () => {},
       disable: false
     }
-    if (data.status === StatusOption.Faild || data.status === StatusOption.Success) {
+    if (data.status === StatusOption.Failed || data.status === StatusOption.Success) {
       ret.text = <>Voting has ended</>
       ret.disable = true
       return ret
@@ -293,7 +299,14 @@ export default function GovernancePageDetail({
 
     if (approval !== ApprovalState.APPROVED) {
       ret.event = approveCallback
-      ret.text = approval === ApprovalState.PENDING ? <>Allow Amitmatter to use your Matter<Dots>Loading</Dots></> : <>Allow Amitmatter to use your Matter</>
+      ret.text =
+        approval === ApprovalState.PENDING ? (
+          <>
+            Allow Amitmatter to use your Matter<Dots>Loading</Dots>
+          </>
+        ) : (
+          <>Allow Amitmatter to use your Matter</>
+        )
       ret.disable = !!(approval === ApprovalState.PENDING)
       return ret
     }
@@ -322,9 +335,9 @@ export default function GovernancePageDetail({
               Back
             </ButtonEmpty>
           </HideSmall>
-          <Live color={
-            StatusOption.Success === status ? '#728AE0' : StatusOption.Faild === status ? 'gray' : ''
-            }>{status}</Live>
+          <Live color={StatusOption.Success === status ? '#728AE0' : StatusOption.Failed === status ? 'gray' : ''}>
+            {status}
+          </Live>
           <ShowSmall>
             <ButtonEmpty width="auto" padding="0" onClick={handleBackClick}>
               <X color={theme.text3} size={24} />
@@ -397,17 +410,15 @@ export default function GovernancePageDetail({
               <VoteOptionWrapper style={{ padding: '0 20px' }}>
                 <VoteOptionCard selected={selected === VoteOption.FOR} onClick={handleSelect(VoteOption.FOR)}>
                   Vote For
-                  {status ===StatusOption.Live && selected === VoteOption.FOR && 
-                  <TYPE.small>{Number(voteValue) ? voteValue : '-'} MATTER</TYPE.small>
-                  }
+                  {status === StatusOption.Live && selected === VoteOption.FOR && (
+                    <TYPE.small>{Number(voteValue) ? voteValue : '-'} MATTER</TYPE.small>
+                  )}
                 </VoteOptionCard>
                 <VoteOptionCard selected={selected === VoteOption.AGAINST} onClick={handleSelect(VoteOption.AGAINST)}>
                   Vote Against
-                  {status ===StatusOption.Live && selected === VoteOption.AGAINST && 
-                  <TYPE.small>
-                    { Number(voteValue) ? voteValue : '-'} MATTER
-                  </TYPE.small>
-                  }
+                  {status === StatusOption.Live && selected === VoteOption.AGAINST && (
+                    <TYPE.small>{Number(voteValue) ? voteValue : '-'} MATTER</TYPE.small>
+                  )}
                 </VoteOptionCard>
               </VoteOptionWrapper>
               {data.status === StatusOption.Live && (
@@ -434,14 +445,14 @@ export default function GovernancePageDetail({
               <TYPE.smallGray textAlign="center">
                 {selected === VoteOption.FOR ? contents?.agreeFor : contents?.againstFor}
               </TYPE.smallGray>
-              {status === StatusOption.Live ? 
-              (<ButtonPrimary width="320px" onClick={btnStatus.event} disabled={btnStatus.disable}>
-                {btnStatus.text}
-              </ButtonPrimary>) : 
-              (
-              <ButtonPrimary width="320px" onClick={claimBtn.event} disabled={claimBtn.disable}>
-                {claimBtn.text}
-              </ButtonPrimary>
+              {status === StatusOption.Live ? (
+                <ButtonPrimary width="320px" onClick={btnStatus.event} disabled={btnStatus.disable}>
+                  {btnStatus.text}
+                </ButtonPrimary>
+              ) : (
+                <ButtonPrimary width="320px" onClick={claimBtn.event} disabled={claimBtn.disable}>
+                  {claimBtn.text}
+                </ButtonPrimary>
               )}
             </AutoColumn>
           </GradientCard>

@@ -64,7 +64,7 @@ export const ContentWrapper = styled.div`
   padding: 0 24px 0 82px
   `}
 `
-export const Live = styled.div<{ color?: string; }>`
+export const Live = styled.div<{ color?: string }>`
   color: ${({ theme, color }) => color || theme.green1};
   display: flex;
   align-items: center;
@@ -156,17 +156,13 @@ export default function Governance() {
           </HideSmall>
         </RowBetween>
         {!loading && governanceList?.length === 0 && (
-            <EmptyProposals>
-              <TYPE.body style={{ marginBottom: '8px' }}>
-                No proposals found.
-              </TYPE.body>
-              <TYPE.subHeader>
-                <i>
-                  Proposals submitted by community members will appear here.
-                </i>
-              </TYPE.subHeader>
-            </EmptyProposals>
-          )}
+          <EmptyProposals>
+            <TYPE.body style={{ marginBottom: '8px' }}>No proposals found.</TYPE.body>
+            <TYPE.subHeader>
+              <i>Proposals submitted by community members will appear here.</i>
+            </TYPE.subHeader>
+          </EmptyProposals>
+        )}
         <ContentWrapper>
           {governanceList &&
             governanceList.map(data => <GovernanceCard data={data} key={data.id} onClick={handleCardClick(data.id)} />)}
@@ -181,7 +177,7 @@ export default function Governance() {
 }
 
 function GovernanceCard({
-  data: { title, id, creator, timeLeft, voteFor, voteAgainst, contents ,status},
+  data: { title, id, creator, timeLeft, voteFor, voteAgainst, contents, status },
   onClick
 }: {
   data: GovernanceData
@@ -191,9 +187,7 @@ function GovernanceCard({
     <AppBody maxWidth="340px" gradient1={true} isCard style={{ cursor: 'pointer' }}>
       <AutoColumn gap="16px" onClick={onClick}>
         <RowBetween>
-          <Live color={
-            'Success' === status ? '#728AE0' : 'Faild' === status ? 'gray' : ''
-            }>{status}</Live>
+          <Live color={'Success' === status ? '#728AE0' : 'Failed' === status ? '#FF0000' : ''}>{status}</Live>
           <TYPE.smallGray>#{id}</TYPE.smallGray>
         </RowBetween>
         <AutoColumn gap="4px">
