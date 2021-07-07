@@ -158,9 +158,10 @@ export default function GovernancePageDetail({
   function calcVoteForPercentage(type: VoteOption, voteFor: string | number, voteAgainst: string | number): string {
     const count = JSBI.add(JSBI.BigInt(voteFor), JSBI.BigInt(voteAgainst))
     if (!JSBI.toNumber(count)) return '0'
-    const percentage = JSBI.toNumber(
-      JSBI.divide(JSBI.multiply(JSBI.BigInt(100), JSBI.BigInt(type === VoteOption.FOR ? voteFor : voteAgainst)), count)
-    ).toFixed(2)
+    let percentage = JSBI.toNumber(
+      JSBI.divide(JSBI.multiply(JSBI.BigInt(10000), JSBI.BigInt(type === VoteOption.FOR ? voteFor : voteAgainst)), count)
+    ).toString()
+    percentage = ( parseFloat(percentage) / 100 ).toFixed(2)
     return percentage
   }
 
