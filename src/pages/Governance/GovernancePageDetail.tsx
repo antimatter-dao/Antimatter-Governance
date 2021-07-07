@@ -25,6 +25,7 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import { getDeltaTime, Timer } from 'components/Timer/intex'
+import { Dots } from 'components/swap/styleds'
 
 enum VoteOption {
   FOR = 'for',
@@ -140,13 +141,17 @@ export default function GovernancePageDetail({
     if (!contact || StatusOption.Live === data.status) {
       return
     }
+    setAttemptingTxn(true)
     const args = [governanceIndex]
     contact.unStaking(...args, {}).then((response: TransactionResponse) => {
+      setAttemptingTxn(false)
       addTransaction(response, {
         summary: 'vote claim'
       })
 
       setTxHash(response.hash)
+    }).catch((error: any)=>{
+      setAttemptingTxn(false)
     })
   }, [contact, data, governanceIndex, addTransaction])
 
@@ -175,6 +180,11 @@ export default function GovernancePageDetail({
       setVoteValue('')
 
       setTxHash(response.hash)
+    }).catch((error: any)=>{
+      setAttemptingTxn(false)
+      if (error?.code !== 4001) {
+        console.error('---->', error)
+      }
     })
   }, [contact, inputValue, governanceIndex, addTransaction, selected])
 
@@ -200,7 +210,6 @@ export default function GovernancePageDetail({
   }, [])
 
   const handleConfirmConfirmation = useCallback(() => {
-    setAttemptingTxn(true)
     onVote()
   }, [onVote])
 
@@ -250,46 +259,46 @@ export default function GovernancePageDetail({
 
   const btnStatus = useMemo(() => {
     const ret = {
-      text: 'submit',
+      text: <>submit</>,
       event: () => {},
       disable: false
     }
     if (data.status === StatusOption.Faild || data.status === StatusOption.Success) {
-      ret.text = 'Voting has ended'
+      ret.text = <>Voting has ended</>
       ret.disable = true
       return ret
     }
     if (!chainId) {
-      ret.text = 'Connect wallet'
+      ret.text = <>Connect wallet</>
       ret.disable = true
       return ret
     }
     if (chainId !== FACTORY_CHAIN_ID) {
-      ret.text = 'Please switch to ETH chain'
+      ret.text = <>Please switch to ETH chain</>
       ret.disable = true
       return ret
     }
 
     if (!inputValue || (inputValue && !inputValue.greaterThan(JSBI.BigInt(0)))) {
-      ret.text = 'Please input amount'
+      ret.text = <>Please input amount</>
       ret.disable = true
       return ret
     }
 
     if (!enoughBalance) {
-      ret.text = 'Insufficient Balance'
+      ret.text = <>Insufficient Balance</>
       ret.disable = true
       return ret
     }
 
     if (approval !== ApprovalState.APPROVED) {
       ret.event = approveCallback
-      ret.text = approval === ApprovalState.PENDING ? 'Approving' : 'Approve'
+      ret.text = approval === ApprovalState.PENDING ? <>Allow Amitmatter to use your Matter<Dots>Loading</Dots></> : <>Allow Amitmatter to use your Matter</>
       ret.disable = !!(approval === ApprovalState.PENDING)
       return ret
     }
 
-    ret.text = 'submit'
+    ret.text = <>submit</>
     ret.event = handleSubmit
     ret.disable = false
     return ret
@@ -313,7 +322,9 @@ export default function GovernancePageDetail({
               Back
             </ButtonEmpty>
           </HideSmall>
-          <Live gray={StatusOption.Live !== status ? 'gray' : ''}>{status}</Live>
+          <Live color={
+            StatusOption.Success === status ? '#728AE0' : StatusOption.Faild === status ? 'gray' : ''
+            }>{status}</Live>
           <ShowSmall>
             <ButtonEmpty width="auto" padding="0" onClick={handleBackClick}>
               <X color={theme.text3} size={24} />

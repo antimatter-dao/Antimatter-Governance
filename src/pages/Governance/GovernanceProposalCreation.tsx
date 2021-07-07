@@ -1,5 +1,5 @@
 import { TokenAmount, JSBI, Token } from '@uniswap/sdk'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useWeb3React } from '@web3-react/core'
 import { X } from 'react-feather'
 import styled from 'styled-components'
@@ -21,6 +21,7 @@ import { useApproveCallback } from 'hooks/useApproveCallback'
 import { tryParseAmount } from 'state/swap/hooks'
 import { useGovernanceCreation } from 'hooks/useGovernanceDetail'
 import StaticOverlay from 'components/Modal/StaticOverlay'
+import { FACTORY_CHAIN_ID } from '../../constants'
 
 const Wrapper = styled.div`
   width: 920px;
@@ -46,14 +47,14 @@ const Wrapper = styled.div`
   `};
 `
 
-const Warning = styled.div`
-  background-color: ${({ theme }) => theme.red1};
-  border-radius: 14px;
-  padding: 16px;
-  width: 100%;
-  margin: 30px 0;
-  text-align: center;
-`
+// const Warning = styled.div`
+//   background-color: ${({ theme }) => theme.red1};
+//   border-radius: 14px;
+//   padding: 16px;
+//   width: 100%;
+//   margin: 30px 0;
+//   text-align: center;
+// `
 
 const ModalButtonWrapper = styled(RowBetween)`
   margin-top: 14px;
@@ -154,10 +155,14 @@ export default function GovernanceProposalCreation({
       return
     }
 
+    const _span = activeStep!==10 ?
+      JSBI.BigInt((activeStep + 3)*60*60*24).toString() :
+      JSBI.BigInt(5*60).toString() 
+
     const args = [
       input.title,
       `{"summary":"${input.summary}","details":"${input.details}","agreeFor":"${input.agreeFor}","againstFor":"${input.againstFor}"}`,
-      JSBI.BigInt((activeStep + 3)*60*60*24).toString(),
+      _span,
       tryParseAmount(JSBI.BigInt(stakeAmount).toString(), chainId ? new Token(chainId, testCoin, 18) : undefined)?.raw.toString()
     ]
 
@@ -182,6 +187,33 @@ export default function GovernanceProposalCreation({
         }
       })
   }, [activeStep, addTransaction, approval, governanceCreateCallback, chainId, handleApprove, input])
+
+  const btnStatus = useMemo(() => {
+    const ret = {
+      text: <>Determine</>,
+      disable: false
+    }
+    if (!chainId) {
+      ret.text = <>Connect wallet</>
+      ret.disable = true
+      return ret
+    }
+    if (chainId !== FACTORY_CHAIN_ID) {
+      ret.text = <>Please switch to ETH chain</>
+      ret.disable = true
+      return ret
+    }
+
+    if (notEnoughBalance) {
+      ret.text = <>You must have 100000 MATTER to create a proposal</>
+      ret.disable = true
+      return ret
+    }
+
+    ret.text = <>Determine</>
+    ret.disable = false
+    return ret
+  }, [notEnoughBalance, chainId])
 
   return (
     <>
@@ -243,12 +275,12 @@ export default function GovernanceProposalCreation({
               <TYPE.darkGray>Please set a time frame for the proposal. Select the number of days below</TYPE.darkGray>
               <GovernanceTimeline activeStep={activeStep} onStep={handleStep} disabled={notEnoughBalance} />
               {error && <TYPE.body color={theme.red1}>{error}</TYPE.body>}
-              <ButtonPrimary type="submit" disabled={notEnoughBalance} style={{ maxWidth: 416, margin: '0 auto' }}>
-                Determine
+              <ButtonPrimary type="submit" disabled={btnStatus.disable} style={{ maxWidth: 416, margin: '0 auto' }}>
+                {btnStatus.text}
               </ButtonPrimary>
             </AutoColumn>
           </form>
-          {notEnoughBalance && <Warning>You must have {stakeAmount + 100000} MATTER to create a proposal</Warning>}
+          {/* {notEnoughBalance && <Warning>You must have 100000 MATTER to create a proposal</Warning>} */}
         </Wrapper>
       </StaticOverlay>
     </>
@@ -326,6 +358,10 @@ function GovernanceTimeline({
             </Step>
           )
         })}
+        {/* test */}
+        <Step key={10} active={activeStep === 10} className={classes.step} disabled={disabled}>
+          <StepButton onClick={onStep(10)}>5 mins</StepButton>
+        </Step>
       </Stepper>
       <div></div>
     </div>
@@ -344,7 +380,7 @@ function ConfirmationModalContent({ onDismiss, onConfirm }: { onDismiss: () => v
       </RowBetween>
 
       <TYPE.body fontSize={16}>
-        You will stack 200 MATTER
+        You will stack 100000 MATTER
         <br /> to submit this proposal
       </TYPE.body>
       <ModalButtonWrapper>
