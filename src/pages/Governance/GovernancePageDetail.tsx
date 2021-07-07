@@ -335,7 +335,7 @@ export default function GovernancePageDetail({
               Back
             </ButtonEmpty>
           </HideSmall>
-          <Live color={StatusOption.Success === status ? '#728AE0' : StatusOption.Failed === status ? 'gray' : ''}>
+          <Live color={StatusOption.Success === status ? '#728AE0' : StatusOption.Failed === status ? '#FF0000' : ''}>
             {status}
           </Live>
           <ShowSmall>
