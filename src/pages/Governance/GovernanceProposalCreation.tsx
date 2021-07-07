@@ -155,15 +155,17 @@ export default function GovernanceProposalCreation({
       return
     }
 
-    const _span = activeStep!==10 ?
-      JSBI.BigInt((activeStep + 3)*60*60*24).toString() :
-      JSBI.BigInt(5*60).toString() 
+    const _span =
+      activeStep !== 10 ? JSBI.BigInt((activeStep + 3) * 60 * 60 * 24).toString() : JSBI.BigInt(5 * 60).toString()
 
     const args = [
       input.title,
       `{"summary":"${input.summary}","details":"${input.details}","agreeFor":"${input.agreeFor}","againstFor":"${input.againstFor}"}`,
       _span,
-      tryParseAmount(JSBI.BigInt(stakeAmount).toString(), chainId ? new Token(chainId, testCoin, 18) : undefined)?.raw.toString()
+      tryParseAmount(
+        JSBI.BigInt(stakeAmount).toString(),
+        chainId ? new Token(chainId, testCoin, 18) : undefined
+      )?.raw.toString()
     ]
 
     setAttemptingTxn(true)
@@ -241,36 +243,36 @@ export default function GovernanceProposalCreation({
               <TYPE.smallHeader fontSize={22}>Proposal Description</TYPE.smallHeader>
               <TextInput
                 label={fields.title}
-                placeholder="Enter your project name (Keep it Below 10 words)"
+                placeholder="Enter your proposal name (Keep it Below 10 words)"
                 disabled={notEnoughBalance}
                 name="title"
-              ></TextInput>
+              />
               <TextInput
                 label={fields.summary}
                 placeholder="What will be done if the proposal is implement (Keep it below 200 words)"
                 textarea
                 name="summary"
                 disabled={notEnoughBalance}
-              ></TextInput>
+              />
               <TextInput
                 label={fields.details}
                 placeholder="Write a Longer motivation with links and references if necessary"
                 disabled={notEnoughBalance}
                 name="details"
-              ></TextInput>
+              />
               <TYPE.smallHeader fontSize={22}>Proposal Settings</TYPE.smallHeader>
               <TextInput
                 label={fields.agreeFor}
                 placeholder="Formulate clear for position"
                 disabled={notEnoughBalance}
                 name="agreeFor"
-              ></TextInput>
+              />
               <TextInput
                 label={fields.againstFor}
                 placeholder="Formulate clear Against position"
                 disabled={notEnoughBalance}
                 name="againstFor"
-              ></TextInput>
+              />
               <TYPE.smallHeader fontSize={22}>Proposal Timing</TYPE.smallHeader>
               <TYPE.darkGray>Please set a time frame for the proposal. Select the number of days below</TYPE.darkGray>
               <GovernanceTimeline activeStep={activeStep} onStep={handleStep} disabled={notEnoughBalance} />
