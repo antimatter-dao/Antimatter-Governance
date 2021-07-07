@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { CurrencyAmount } from '@uniswap/sdk'
-import { XCircle } from 'react-feather'
+// import { XCircle } from 'react-feather'
 import styled from 'styled-components'
 import { RowBetween, RowFixed } from 'components/Row'
 import { AutoColumn } from 'components/Column'
@@ -38,6 +38,17 @@ const DividerThin = styled.div`
   height: 1px;
   border-bottom: 1px solid rgba(255,255,255,.2)};
 `
+const EmptyProposals = styled.div`
+  border: 1px solid ${({ theme }) => theme.text4};
+  padding: 16px 12px;
+  border-radius: 12px;
+  display: flex;
+  max-width: 760px;
+  margin: auto;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`
 
 export const ContentWrapper = styled.div`
   position: relative;
@@ -53,15 +64,15 @@ export const ContentWrapper = styled.div`
   padding: 0 24px 0 82px
   `}
 `
-export const Live = styled.div<{ gray?: string; }>`
-  color: ${({ theme, gray }) => gray || theme.green1};
+export const Live = styled.div<{ color?: string; }>`
+  color: ${({ theme, color }) => color || theme.green1};
   display: flex;
   align-items: center;
   :before {
     content: "''";
     height: 8px;
     width: 8px;
-    background-color: ${({ theme, gray }) => gray || theme.green1};
+    background-color: ${({ theme, color }) => color || theme.green1};
     border-radius: 50%;
     margin-right: 8px;
   }
@@ -144,6 +155,18 @@ export default function Governance() {
             </ButtonOutlinedPrimary>
           </HideSmall>
         </RowBetween>
+        {!loading && governanceList?.length === 0 && (
+            <EmptyProposals>
+              <TYPE.body style={{ marginBottom: '8px' }}>
+                No proposals found.
+              </TYPE.body>
+              <TYPE.subHeader>
+                <i>
+                  Proposals submitted by community members will appear here.
+                </i>
+              </TYPE.subHeader>
+            </EmptyProposals>
+          )}
         <ContentWrapper>
           {governanceList &&
             governanceList.map(data => <GovernanceCard data={data} key={data.id} onClick={handleCardClick(data.id)} />)}
@@ -168,7 +191,9 @@ function GovernanceCard({
     <AppBody maxWidth="340px" gradient1={true} isCard style={{ cursor: 'pointer' }}>
       <AutoColumn gap="16px" onClick={onClick}>
         <RowBetween>
-          <Live gray={ 'Live' !== status ? "gray" : ''}>{status}</Live>
+          <Live color={
+            'Success' === status ? '#728AE0' : 'Faild' === status ? 'gray' : ''
+            }>{status}</Live>
           <TYPE.smallGray>#{id}</TYPE.smallGray>
         </RowBetween>
         <AutoColumn gap="4px">
@@ -204,13 +229,13 @@ function GovernanceCard({
 export function AlternativeDisplay({ count, loading }: { count: number | undefined; loading: boolean }) {
   return (
     <AutoColumn justify="center" style={{ marginTop: 100 }}>
-      {!loading && count === 0 && (
+      {/* {!loading && count === 0 && (
         <AutoColumn justify="center" gap="20px">
           <XCircle size={40} strokeWidth={1} />
           <TYPE.body>There is no proposal at the moment</TYPE.body>
           <TYPE.body>Please try again later or create one yourself</TYPE.body>
         </AutoColumn>
-      )}
+      )} */}
       {loading && (
         <AnimatedWrapper>
           <AnimatedImg>

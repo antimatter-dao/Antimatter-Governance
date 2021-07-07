@@ -141,13 +141,17 @@ export default function GovernancePageDetail({
     if (!contact || StatusOption.Live === data.status) {
       return
     }
+    setAttemptingTxn(true)
     const args = [governanceIndex]
     contact.unStaking(...args, {}).then((response: TransactionResponse) => {
+      setAttemptingTxn(false)
       addTransaction(response, {
         summary: 'vote claim'
       })
 
       setTxHash(response.hash)
+    }).catch((error: any)=>{
+      setAttemptingTxn(false)
     })
   }, [contact, data, governanceIndex, addTransaction])
 
@@ -176,6 +180,11 @@ export default function GovernancePageDetail({
       setVoteValue('')
 
       setTxHash(response.hash)
+    }).catch((error: any)=>{
+      setAttemptingTxn(false)
+      if (error?.code !== 4001) {
+        console.error('---->', error)
+      }
     })
   }, [contact, inputValue, governanceIndex, addTransaction, selected])
 
@@ -201,7 +210,6 @@ export default function GovernancePageDetail({
   }, [])
 
   const handleConfirmConfirmation = useCallback(() => {
-    setAttemptingTxn(true)
     onVote()
   }, [onVote])
 
@@ -314,7 +322,9 @@ export default function GovernancePageDetail({
               Back
             </ButtonEmpty>
           </HideSmall>
-          <Live gray={StatusOption.Live !== status ? 'gray' : ''}>{status}</Live>
+          <Live color={
+            StatusOption.Success === status ? '#728AE0' : StatusOption.Faild === status ? 'gray' : ''
+            }>{status}</Live>
           <ShowSmall>
             <ButtonEmpty width="auto" padding="0" onClick={handleBackClick}>
               <X color={theme.text3} size={24} />
