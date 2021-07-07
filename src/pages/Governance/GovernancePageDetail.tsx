@@ -109,7 +109,7 @@ const ModalButtonWrapper = styled(RowBetween)`
 
 function toNumber(weiValue: string): string {
   if (weiValue === '') return '-'
-  return new TokenAmount(GOVERNANCE_TOKEN, JSBI.BigInt(weiValue)).toSignificant(1)
+  return new TokenAmount(GOVERNANCE_TOKEN, JSBI.BigInt(weiValue)).toSignificant()
 }
 
 export default function GovernancePageDetail({
