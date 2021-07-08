@@ -161,7 +161,7 @@ export default function GovernancePageDetail({
       .catch((error: any) => {
         setAttemptingTxn(false)
       })
-  }, [contact, data, governanceIndex, addTransaction])
+  }, [contact, data, governanceIndex, addTransaction, userStaking])
 
   function calcVoteForPercentage(type: VoteOption, voteFor: string | number, voteAgainst: string | number): string {
     const count = JSBI.add(JSBI.BigInt(voteFor), JSBI.BigInt(voteAgainst))
@@ -273,7 +273,7 @@ export default function GovernancePageDetail({
 
     ret.disable = false
     return ret
-  }, [onClaim, userStaking, chainId])
+  }, [userStaking, chainId, handleClaimSubmit])
 
   const btnStatus = useMemo(() => {
     const ret = {
