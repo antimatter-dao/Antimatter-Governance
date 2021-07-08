@@ -4,12 +4,12 @@ import { CurrencyAmount } from '@uniswap/sdk'
 import styled from 'styled-components'
 import { RowBetween, RowFixed } from 'components/Row'
 import { AutoColumn } from 'components/Column'
-import { HideSmall, TYPE, AnimatedImg, AnimatedWrapper } from 'theme'
+import { HideSmall, TYPE } from 'theme'
 import { ButtonOutlinedPrimary } from 'components/Button'
 import AppBody from 'pages/AppBody'
 import GovernanceProposalCreation from './GovernanceProposalCreation'
 import { GovernanceData, useGovernanceList } from '../../hooks/useGovernanceDetail'
-import Loader from 'assets/svg/antimatter_background_logo.svg'
+// import Loader from 'assets/svg/antimatter_background_logo.svg'
 import { useHistory } from 'react-router-dom'
 import { Timer } from 'components/Timer/intex'
 import { GOVERNANCE_TOKEN } from '../../constants'
@@ -119,7 +119,7 @@ display: flex
 
 export default function Governance() {
   const { account, error } = useWeb3React()
-  const { list: governanceList, loading } = useGovernanceList()
+  const { list: governanceList } = useGovernanceList()
   const [isCreationOpen, setIsCreationOpen] = useState(false)
   const history = useHistory()
   const balance = useCurrencyBalance(account ?? undefined, GOVERNANCE_TOKEN)
@@ -159,7 +159,7 @@ export default function Governance() {
             </ButtonOutlinedPrimary>
           </HideSmall>
         </RowBetween>
-        {!loading && governanceList?.length === 0 && (
+        {governanceList?.length === 0 && (
           <EmptyProposals>
             <TYPE.body style={{ marginBottom: '8px' }}>No proposals found.</TYPE.body>
             <TYPE.subHeader>
@@ -171,7 +171,7 @@ export default function Governance() {
           {governanceList &&
             governanceList.map(data => <GovernanceCard data={data} key={data.id} onClick={handleCardClick(data.id)} />)}
         </ContentWrapper>
-        <AlternativeDisplay count={governanceList ? governanceList.length : undefined} loading={loading} />
+        {/* <AlternativeDisplay count={governanceList ? governanceList.length : undefined} loading={loading} /> */}
       </Wrapper>
       <MobileCreate>
         <ButtonOutlinedPrimary onClick={handleOpenCreation}>+ Create Proposal</ButtonOutlinedPrimary>
@@ -239,23 +239,23 @@ function GovernanceCard({
   )
 }
 
-export function AlternativeDisplay({ loading }: { count: number | undefined; loading: boolean }) {
-  return (
-    <AutoColumn justify="center" style={{ marginTop: 100 }}>
-      {/* {!loading && count === 0 && (
-        <AutoColumn justify="center" gap="20px">
-          <XCircle size={40} strokeWidth={1} />
-          <TYPE.body>There is no proposal at the moment</TYPE.body>
-          <TYPE.body>Please try again later or create one yourself</TYPE.body>
-        </AutoColumn>
-      )} */}
-      {loading && (
-        <AnimatedWrapper>
-          <AnimatedImg>
-            <img src={Loader} alt="loading-icon" />
-          </AnimatedImg>
-        </AnimatedWrapper>
-      )}
-    </AutoColumn>
-  )
-}
+// export function AlternativeDisplay({ loading }: { count: number | undefined; loading: boolean }) {
+//   return (
+//     <AutoColumn justify="center" style={{ marginTop: 100 }}>
+//       {!loading && count === 0 && (
+//         <AutoColumn justify="center" gap="20px">
+//           <XCircle size={40} strokeWidth={1} />
+//           <TYPE.body>There is no proposal at the moment</TYPE.body>
+//           <TYPE.body>Please try again later or create one yourself</TYPE.body>
+//         </AutoColumn>
+//       )}
+//       {loading && (
+//         <AnimatedWrapper>
+//           <AnimatedImg>
+//             <img src={Loader} alt="loading-icon" />
+//           </AnimatedImg>
+//         </AnimatedWrapper>
+//       )}
+//     </AutoColumn>
+//   )
+// }
