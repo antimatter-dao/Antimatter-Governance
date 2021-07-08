@@ -358,6 +358,10 @@ function GovernanceTimeline({
             </Step>
           )
         })}
+        {/* test */}
+        <Step key={10} active={activeStep === 10} className={classes.step} disabled={disabled}>
+          <StepButton onClick={onStep(10)}>5 mins</StepButton>
+        </Step>
       </Stepper>
       <div></div>
     </div>
