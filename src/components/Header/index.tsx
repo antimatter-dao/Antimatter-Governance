@@ -3,7 +3,6 @@ import React from 'react'
 import { Check, ChevronDown } from 'react-feather'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-// import { useTranslation } from 'react-i18next'
 import { darken } from 'polished'
 import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
@@ -11,49 +10,11 @@ import { useAggregateUniBalance } from '../../state/wallet/hooks'
 import { ExternalLink, TYPE } from '../../theme'
 import { RowFixed, RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
-import ClaimModal from '../claim/ClaimModal'
 import usePrevious from '../../hooks/usePrevious'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.svg'
 import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
-import useTheme from 'hooks/useTheme'
-import ToggleMenu from './ToggleMenu'
-
-interface TabContent {
-  title: string
-  route?: string
-  link?: string
-  titleContent?: JSX.Element
-}
-
-interface Tab extends TabContent {
-  subTab?: TabContent[]
-}
-
-export const tabs: Tab[] = [
-  { title: 'Option Trading', route: 'option_trading' },
-  { title: 'Option Exercise', route: 'option_exercise' },
-  { title: 'Option Creation', route: 'option_creation' },
-  { title: 'Farm', route: 'farm' },
-  { title: 'Governance', route: 'governance' },
-  {
-    title: 'About',
-    subTab: [
-      { title: 'Docs', link: 'https://docs.antimatter.finance/' },
-      { title: 'Github', link: 'https://github.com/antimatter-finance' },
-      {
-        title: 'Auditing Report',
-        link: 'https://github.com/antimatter-finance/antimatter-finance.github.io/blob/main/audit_en.pdf'
-      },
-      {
-        title: 'faq',
-        titleContent: <FAQButton />,
-        route: 'faq'
-      }
-    ]
-  }
-]
 
 const NetworkInfo: {
   [key: number]: { title: string; color: string; icon: JSX.Element; link?: string; linkIcon?: JSX.Element }
@@ -204,12 +165,6 @@ const UNIWrapper = styled.span`
   position: relative;
 `
 
-// const HideSmall = styled.span`
-//   ${({ theme }) => theme.mediaWidth.upToSmall`
-//     display: none;
-//   `};
-// `
-
 const NetworkCard = styled.div<{ color?: string }>`
   color: #000000;
   cursor: pointer;
@@ -327,29 +282,6 @@ const StyledLogo = styled(Logo)`
   margin-right: 60px;
 `
 
-function FAQButton() {
-  const theme = useTheme()
-  return (
-    <RowFixed>
-      <RowFixed
-        justify="center"
-        style={{
-          borderRadius: '50%',
-          border: `1px solid ${theme.primary1}`,
-          width: '18px',
-          height: '18px',
-          marginRight: '12px'
-        }}
-      >
-        <TYPE.body fontSize={14} color={theme.primary1}>
-          ?
-        </TYPE.body>
-      </RowFixed>
-      FAQ
-    </RowFixed>
-  )
-}
-
 const MobileHeader = styled.header`
   width:100%;
   display:flex;
@@ -379,7 +311,6 @@ export default function Header() {
 
   return (
     <HeaderFrame>
-      <ClaimModal />
       <HeaderRow>
         <Link to={'/'}>
           <StyledLogo />
@@ -387,7 +318,6 @@ export default function Header() {
         <div style={{ paddingLeft: 8, display: 'flex', alignItems: 'center', marginLeft: 'auto', marginRight: '2rem' }}>
           <HeaderControls>
             <HeaderElement show={!!account}>
-              {/* <HideSmall> */}
               {chainId && NetworkInfo[chainId] && (
                 <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
                   {NetworkInfo[chainId as number]?.icon} {NetworkInfo[chainId].title}
@@ -415,21 +345,13 @@ export default function Header() {
                   </div>
                 </NetworkCard>
               )}
-              {/* </HideSmall> */}
             </HeaderElement>
-            {/* <HeaderElementWrap>
-          <StyledMenuButton onClick={() => toggleDarkMode()}>
-            {darkMode ? <Moon size={20} /> : <Sun size={20} />}
-          </StyledMenuButton>
-          <Menu />
-        </HeaderElementWrap> */}
 
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
               {!!account && aggregateBalance && (
                 <UNIWrapper>
                   <UNIAmount style={{ pointerEvents: 'none' }}>
                     {account && (
-                      // <HideSmall>
                       <TYPE.white
                         style={{
                           paddingRight: '.4rem'
@@ -444,18 +366,12 @@ export default function Header() {
                           duration={1}
                         />
                       </TYPE.white>
-                      // </HideSmall>
                     )}
                     MATTER
                   </UNIAmount>
-                  {/* <CardNoise /> */}
                 </UNIWrapper>
               )}
-              {/* {account && userEthBalance ? (
-                <BalanceText style={{ flexShrink: 0 }} fontWeight={500}>
-                  {userEthBalance?.toSignificant(4)} ETH
-                </BalanceText>
-              ) : null} */}
+
               <Web3Status />
             </AccountElement>
           </HeaderControls>
@@ -466,7 +382,6 @@ export default function Header() {
           <Link to={'/'}>
             <StyledLogo />
           </Link>
-          <ToggleMenu />
         </RowBetween>
       </MobileHeader>
     </HeaderFrame>

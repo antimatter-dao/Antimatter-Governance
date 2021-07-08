@@ -9,7 +9,6 @@ import { ArrowLeft, AlertTriangle } from 'react-feather'
 import useTheme from 'hooks/useTheme'
 import { transparentize } from 'polished'
 import { ButtonPrimary } from 'components/Button'
-import { SectionBreak } from 'components/swap/styleds'
 import { ExternalLink } from '../../theme/components'
 import ListLogo from 'components/ListLogo'
 import { PaddedColumn, Checkbox, TextDot } from './styleds'
@@ -27,6 +26,11 @@ const Wrapper = styled.div`
   overflow: auto;
 `
 
+export const SectionBreak = styled.div`
+  height: 1px;
+  width: 100%;
+  background-color: ${({ theme }) => theme.bg3};
+`
 interface ImportProps {
   listURL: string
   list: TokenList

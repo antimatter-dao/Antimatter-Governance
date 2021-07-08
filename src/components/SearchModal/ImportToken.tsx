@@ -10,7 +10,6 @@ import { ArrowLeft, AlertTriangle } from 'react-feather'
 import { transparentize } from 'polished'
 import useTheme from 'hooks/useTheme'
 import { ButtonPrimary } from 'components/Button'
-import { SectionBreak } from 'components/swap/styleds'
 import { useAddUserToken } from 'state/user/hooks'
 import { getEtherscanLink } from 'utils'
 import { useActiveWeb3React } from 'hooks'
@@ -23,6 +22,11 @@ const Wrapper = styled.div`
   position: relative;
   width: 100%;
   overflow: auto;
+`
+export const SectionBreak = styled.div`
+  height: 1px;
+  width: 100%;
+  background-color: ${({ theme }) => theme.bg3};
 `
 
 const WarningWrapper = styled(Card)<{ highWarning: boolean }>`
