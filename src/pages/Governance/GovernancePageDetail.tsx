@@ -31,6 +31,10 @@ enum VoteOption {
   FOR = 'for',
   AGAINST = 'against'
 }
+enum ConfirmType {
+  Vote = 'Vote',
+  Claim = 'Claim'
+}
 enum StatusOption {
   Live = 'Live',
   Success = 'Success',
@@ -130,6 +134,7 @@ export default function GovernancePageDetail({
   const contact = useGovernanceContract()
   const addTransaction = useTransactionAdder()
   const userStaking = useUserStaking(governanceIndex)
+  const [submitType, setSubmitType] = useState(ConfirmType.Vote)
 
   const inputValue = useMemo(() => {
     return tryParseAmount(voteValue, GOVERNANCE_TOKEN)
@@ -204,6 +209,12 @@ export default function GovernancePageDetail({
     []
   )
   const handleSubmit = useCallback(() => {
+    setSubmitType(ConfirmType.Vote)
+    setShowConfirm(true)
+  }, [])
+
+  const handleClaimSubmit = useCallback(() => {
+    setSubmitType(ConfirmType.Claim)
     setShowConfirm(true)
   }, [])
 
@@ -230,7 +241,7 @@ export default function GovernancePageDetail({
     const ret = {
       text: <>Claim</>,
       disable: true,
-      event: onClaim
+      event: handleClaimSubmit
     }
 
     if (!chainId) {
@@ -460,7 +471,7 @@ export default function GovernancePageDetail({
         </AutoColumn>
       </Wrapper>
       <Modal isOpen={NeutralSubmitted} onDismiss={handleNeutralDismiss}>
-        <SubmittedModalContent onDismiss={handleNeutralDismiss} hash={txHash} />
+        <SubmittedModalContent submitType={submitType} onDismiss={handleNeutralDismiss} hash={txHash} />
       </Modal>
       <TransactionConfirmationModal
         isOpen={showConfirm}
@@ -468,15 +479,21 @@ export default function GovernancePageDetail({
         attemptingTxn={attemptingTxn}
         hash={txHash}
         content={() => (
+          ConfirmType.Vote === submitType ?
           <ConfirmationModalContent
             voteValue={voteValue}
             voteOption={selected}
             onDismiss={handleDismissConfirmation}
             onConfirm={handleConfirmConfirmation}
-          />
+          /> :
+          <ConfirmationClaimModalContent
+            totalStaking={toNumber(userStaking.totalStake)}
+            onDismiss={handleDismissConfirmation}
+            onConfirm={onClaim}
+           />
         )}
         pendingText={'Waiting For Confirmation...'}
-        submittedContent={() => <SubmittedModalContent onDismiss={handleDismissConfirmation} hash={txHash} />}
+        submittedContent={() => <SubmittedModalContent submitType={submitType} onDismiss={handleDismissConfirmation} hash={txHash} />}
       />
     </>
   )
@@ -520,29 +537,69 @@ function ConfirmationModalContent({
   )
 }
 
+function ConfirmationClaimModalContent({
+  totalStaking,
+  onDismiss,
+  onConfirm
+}: {
+  totalStaking: string | number
+  onDismiss: () => void
+  onConfirm: () => void
+}) {
+  const theme = useTheme()
+  return (
+    <AutoColumn justify="center" style={{ padding: 24, width: '100%' }} gap="20px">
+      <RowBetween>
+        <div style={{ width: 24 }} />
+        <TYPE.body fontSize={18}>Claim</TYPE.body>
+        <ButtonEmpty width="auto" padding="0" onClick={onDismiss}>
+          <X color={theme.text3} size={24} />
+        </ButtonEmpty>
+      </RowBetween>
+
+      <TYPE.largeHeader fontSize={28} fontWeight={300}>
+        {totalStaking} MATTER
+      </TYPE.largeHeader>
+      <TYPE.body fontSize={14}>
+        Are you sure you want to claim?
+      </TYPE.body>
+      <ModalButtonWrapper>
+        <ButtonOutlinedPrimary marginRight="15px" onClick={onDismiss}>
+          Cancel
+        </ButtonOutlinedPrimary>
+        <ButtonPrimary onClick={onConfirm}>Confirm</ButtonPrimary>
+      </ModalButtonWrapper>
+    </AutoColumn>
+  )
+}
+
 function SubmittedModalContent({
+  submitType,
   onDismiss,
   hash,
-  isError
+  isError,
 }: {
+  submitType: ConfirmType
   onDismiss: () => void
   hash: string | undefined
   isError?: boolean
 }) {
+  const notice = submitType===ConfirmType.Vote ? {
+    error: <>Oops! Your balance is not <br /> enought to vote against</>,
+    success: <>
+                  Your vote against
+                  <br /> Is accepted successfully
+                </>
+    } : {
+      error: <>Oops! Claim transaction failed.</>,
+      success: <>Claim Transaction submitted successfully.</>
+    }
+  
   return (
     <>
       <SubmittedView onDismiss={onDismiss} hash={hash} hideLink isError={isError}>
         <TYPE.body fontWeight={400} fontSize={18} textAlign="center">
-          {isError ? (
-            <>
-              Oops! Your balance is not <br /> enought to vote against
-            </>
-          ) : (
-            <>
-              Your vote against
-              <br /> Is accepted successfully
-            </>
-          )}
+          {isError ? notice.error : notice.success}
         </TYPE.body>
       </SubmittedView>
     </>

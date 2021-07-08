@@ -14,7 +14,7 @@ import { useHistory } from 'react-router-dom'
 import { Timer } from 'components/Timer/intex'
 import { GOVERNANCE_TOKEN } from '../../constants'
 import { useCurrencyBalance } from 'state/wallet/hooks'
-import { useWeb3React } from '@web3-react/core'
+import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -118,7 +118,7 @@ display: flex
 `
 
 export default function Governance() {
-  const { account } = useWeb3React()
+  const { account,error } = useWeb3React()
   const { list: governanceList, loading } = useGovernanceList()
   const [isCreationOpen, setIsCreationOpen] = useState(false)
   const history = useHistory()
@@ -150,7 +150,10 @@ export default function Governance() {
             </RowFixed>
           </RowFixed>
           <HideSmall>
-            <ButtonOutlinedPrimary onClick={handleOpenCreation} width="180px">
+            <ButtonOutlinedPrimary 
+              disabled={error instanceof UnsupportedChainIdError }
+              onClick={handleOpenCreation} width="180px"
+            >
               + Create Proposal
             </ButtonOutlinedPrimary>
           </HideSmall>

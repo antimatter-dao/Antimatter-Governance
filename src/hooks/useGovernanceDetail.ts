@@ -137,7 +137,7 @@ export function useGovernanceList(): { list: GovernanceData[] | undefined; loadi
 export function useUserStaking(proposeid: string | number | undefined): Users {
   const { account } = useWeb3React()
   const contact = useGovernanceContract()
-  const usersRes = useSingleCallResult(contact, 'users', [proposeid, account ?? ''])
+  const usersRes = useSingleCallResult(contact, 'users', [proposeid, account ?? undefined])
 
   const res = usersRes.result
 
