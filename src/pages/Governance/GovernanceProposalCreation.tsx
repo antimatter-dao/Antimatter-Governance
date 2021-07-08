@@ -17,11 +17,12 @@ import { useTokenBalance } from 'state/wallet/hooks'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
 import { SubmittedView } from 'components/ModalViews'
 import { useTransactionAdder } from 'state/transactions/hooks'
-import { useApproveCallback } from 'hooks/useApproveCallback'
+import { useApproveCallback, ApprovalState } from 'hooks/useApproveCallback'
 import { tryParseAmount } from 'state/swap/hooks'
 import { useGovernanceCreation } from 'hooks/useGovernanceDetail'
 import StaticOverlay from 'components/Modal/StaticOverlay'
 import { FACTORY_CHAIN_ID, GOVERNANCE_ADDRESS, MATTER_ADDRESS } from '../../constants'
+import { Dots } from 'components/swap/styleds'
 
 const Wrapper = styled.div`
   width: 920px;
@@ -110,14 +111,6 @@ export default function GovernanceProposalCreation({
     chainId ? GOVERNANCE_ADDRESS : undefined
   )
 
-  const handleApprove = useCallback(
-    async (callback: () => void) => {
-      await approveCallback()
-      callback()
-    },
-    [approveCallback]
-  )
-
   const handleStep = (step: number) => () => {
     setActiveStep(step)
   }
@@ -148,8 +141,7 @@ export default function GovernanceProposalCreation({
 
   const onCreate = useCallback(async () => {
     if (!governanceCreateCallback) return
-    if (!approval) {
-      handleApprove(onCreate)
+    if (approval !== ApprovalState.APPROVED) {
       return
     }
 
@@ -186,12 +178,13 @@ export default function GovernanceProposalCreation({
           console.error('---->', error)
         }
       })
-  }, [activeStep, addTransaction, approval, governanceCreateCallback, chainId, handleApprove, input])
+  }, [activeStep, addTransaction, approval, governanceCreateCallback, chainId, input])
 
   const btnStatus = useMemo(() => {
     const ret = {
       text: <>Determine</>,
-      disable: false
+      disable: false,
+      event: (): void => {}
     }
     if (!chainId) {
       ret.text = <>Connect wallet</>
@@ -210,10 +203,24 @@ export default function GovernanceProposalCreation({
       return ret
     }
 
+    if (approval !== ApprovalState.APPROVED) {
+      ret.text =
+        approval === ApprovalState.PENDING ? (
+          <>
+            Allow Amitmatter to use your Matter<Dots>Loading</Dots>
+          </>
+        ) : (
+          <>Allow Amitmatter to use your Matter</>
+        )
+      ret.disable = !!(approval === ApprovalState.PENDING)
+      ret.event = approveCallback
+      return ret
+    }
+
     ret.text = <>Determine</>
     ret.disable = false
     return ret
-  }, [notEnoughBalance, chainId])
+  }, [notEnoughBalance, chainId, approval, approveCallback])
 
   return (
     <>
@@ -346,9 +353,9 @@ function GovernanceTimeline({
           )
         })}
         {/* test */}
-        <Step key={10} active={activeStep === 10} className={classes.step} disabled={disabled}>
+        {/* <Step key={10} active={activeStep === 10} className={classes.step} disabled={disabled}>
           <StepButton onClick={onStep(10)}>5 mins</StepButton>
-        </Step>
+        </Step> */}
       </Stepper>
       <div></div>
     </div>
