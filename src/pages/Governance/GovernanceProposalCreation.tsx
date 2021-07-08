@@ -69,7 +69,7 @@ const ModalButtonWrapper = styled(RowBetween)`
 `}
 `
 
-const stakeAmount = 200
+const stakeAmount = 100000
 
 const fields = {
   title: 'Title',
@@ -205,7 +205,7 @@ export default function GovernanceProposalCreation({
     }
 
     if (notEnoughBalance) {
-      ret.text = <>You must have 100000 MATTER to create a proposal</>
+      ret.text = <>You must have {stakeAmount} MATTER to create a proposal</>
       ret.disable = true
       return ret
     }
@@ -242,7 +242,6 @@ export default function GovernanceProposalCreation({
               <TextInput
                 label={fields.title}
                 placeholder="Enter your proposal name (Keep it Below 10 words)"
-                disabled={notEnoughBalance}
                 name="title"
               />
               <TextInput
@@ -250,37 +249,25 @@ export default function GovernanceProposalCreation({
                 placeholder="What will be done if the proposal is implement (Keep it below 200 words)"
                 textarea
                 name="summary"
-                disabled={notEnoughBalance}
               />
               <TextInput
                 label={fields.details}
                 placeholder="Write a Longer motivation with links and references if necessary"
-                disabled={notEnoughBalance}
                 name="details"
               />
               <TYPE.smallHeader fontSize={22}>Proposal Settings</TYPE.smallHeader>
-              <TextInput
-                label={fields.agreeFor}
-                placeholder="Formulate clear for position"
-                disabled={notEnoughBalance}
-                name="agreeFor"
-              />
-              <TextInput
-                label={fields.againstFor}
-                placeholder="Formulate clear Against position"
-                disabled={notEnoughBalance}
-                name="againstFor"
-              />
+              <TextInput label={fields.agreeFor} placeholder="Formulate clear for position" name="agreeFor" />
+              <TextInput label={fields.againstFor} placeholder="Formulate clear Against position" name="againstFor" />
               <TYPE.smallHeader fontSize={22}>Proposal Timing</TYPE.smallHeader>
               <TYPE.darkGray>Please set a time frame for the proposal. Select the number of days below</TYPE.darkGray>
-              <GovernanceTimeline activeStep={activeStep} onStep={handleStep} disabled={notEnoughBalance} />
+              <GovernanceTimeline activeStep={activeStep} onStep={handleStep} disabled={false} />
               {error && <TYPE.body color={theme.red1}>{error}</TYPE.body>}
               <ButtonPrimary type="submit" disabled={btnStatus.disable} style={{ maxWidth: 416, margin: '0 auto' }}>
                 {btnStatus.text}
               </ButtonPrimary>
             </AutoColumn>
           </form>
-          {/* {notEnoughBalance && <Warning>You must have 100000 MATTER to create a proposal</Warning>} */}
+          {/* {notEnoughBalance && <Warning>You must have {stakeAmount} MATTER to create a proposal</Warning>} */}
         </Wrapper>
       </StaticOverlay>
     </>
@@ -380,7 +367,7 @@ function ConfirmationModalContent({ onDismiss, onConfirm }: { onDismiss: () => v
       </RowBetween>
 
       <TYPE.body fontSize={16}>
-        You will stack 100000 MATTER
+        You will stack {stakeAmount} MATTER
         <br /> to submit this proposal
       </TYPE.body>
       <ModalButtonWrapper>
