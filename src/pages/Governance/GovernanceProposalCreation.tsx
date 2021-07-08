@@ -184,7 +184,9 @@ export default function GovernanceProposalCreation({
     const ret = {
       text: <>Determine</>,
       disable: false,
-      event: (): void => {}
+      event: (e: any): void => {
+        e.preventDefault()
+      }
     }
     if (!chainId) {
       ret.text = <>Connect wallet</>
@@ -213,11 +215,15 @@ export default function GovernanceProposalCreation({
           <>Allow Amitmatter to use your Matter</>
         )
       ret.disable = !!(approval === ApprovalState.PENDING)
-      ret.event = approveCallback
+      ret.event = (e): void => {
+        e.preventDefault()
+        approveCallback()
+      }
       return ret
     }
 
     ret.text = <>Determine</>
+    ret.event = () => {}
     ret.disable = false
     return ret
   }, [notEnoughBalance, chainId, approval, approveCallback])
@@ -269,7 +275,12 @@ export default function GovernanceProposalCreation({
               <TYPE.darkGray>Please set a time frame for the proposal. Select the number of days below</TYPE.darkGray>
               <GovernanceTimeline activeStep={activeStep} onStep={handleStep} disabled={false} />
               {error && <TYPE.body color={theme.red1}>{error}</TYPE.body>}
-              <ButtonPrimary type="submit" disabled={btnStatus.disable} style={{ maxWidth: 416, margin: '0 auto' }}>
+              <ButtonPrimary
+                type="submit"
+                onClick={btnStatus.event}
+                disabled={btnStatus.disable}
+                style={{ maxWidth: 416, margin: '0 auto' }}
+              >
                 {btnStatus.text}
               </ButtonPrimary>
             </AutoColumn>
