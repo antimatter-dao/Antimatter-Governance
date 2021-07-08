@@ -457,7 +457,7 @@ export default function GovernancePageDetail({
                   />
                 </div>
               )}
-              <TYPE.smallGray textAlign="center">
+              <TYPE.smallGray textAlign="center" style={{ color: '#f6f6f6' }}>
                 {selected === VoteOption.FOR ? contents?.agreeFor : contents?.againstFor}
               </TYPE.smallGray>
               {status === StatusOption.Live ? (
