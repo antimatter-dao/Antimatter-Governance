@@ -1,6 +1,6 @@
 {
-  "name": "@uniswap/interface",
-  "description": "Uniswap Interface",
+  "name": "antimatter",
+  "description": "AntiMatter governance",
   "homepage": ".",
   "private": true,
   "devDependencies": {
