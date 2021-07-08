@@ -167,9 +167,12 @@ export default function GovernancePageDetail({
     const count = JSBI.add(JSBI.BigInt(voteFor), JSBI.BigInt(voteAgainst))
     if (!JSBI.toNumber(count)) return '0'
     let percentage = JSBI.toNumber(
-      JSBI.divide(JSBI.multiply(JSBI.BigInt(10000), JSBI.BigInt(type === VoteOption.FOR ? voteFor : voteAgainst)), count)
+      JSBI.divide(
+        JSBI.multiply(JSBI.BigInt(10000), JSBI.BigInt(type === VoteOption.FOR ? voteFor : voteAgainst)),
+        count
+      )
     ).toString()
-    percentage = ( parseFloat(percentage) / 100 ).toFixed(2)
+    percentage = (parseFloat(percentage) / 100).toFixed(2)
     return percentage
   }
 
@@ -478,22 +481,26 @@ export default function GovernancePageDetail({
         onDismiss={handleDismissConfirmation}
         attemptingTxn={attemptingTxn}
         hash={txHash}
-        content={() => (
-          ConfirmType.Vote === submitType ?
-          <ConfirmationModalContent
-            voteValue={voteValue}
-            voteOption={selected}
-            onDismiss={handleDismissConfirmation}
-            onConfirm={handleConfirmConfirmation}
-          /> :
-          <ConfirmationClaimModalContent
-            totalStaking={toNumber(userStaking.totalStake)}
-            onDismiss={handleDismissConfirmation}
-            onConfirm={onClaim}
-           />
-        )}
+        content={() =>
+          ConfirmType.Vote === submitType ? (
+            <ConfirmationModalContent
+              voteValue={voteValue}
+              voteOption={selected}
+              onDismiss={handleDismissConfirmation}
+              onConfirm={handleConfirmConfirmation}
+            />
+          ) : (
+            <ConfirmationClaimModalContent
+              totalStaking={toNumber(userStaking.totalStake)}
+              onDismiss={handleDismissConfirmation}
+              onConfirm={onClaim}
+            />
+          )
+        }
         pendingText={'Waiting For Confirmation...'}
-        submittedContent={() => <SubmittedModalContent submitType={submitType} onDismiss={handleDismissConfirmation} hash={txHash} />}
+        submittedContent={() => (
+          <SubmittedModalContent submitType={submitType} onDismiss={handleDismissConfirmation} hash={txHash} />
+        )}
       />
     </>
   )
@@ -560,9 +567,7 @@ function ConfirmationClaimModalContent({
       <TYPE.largeHeader fontSize={28} fontWeight={300}>
         {totalStaking} MATTER
       </TYPE.largeHeader>
-      <TYPE.body fontSize={14}>
-        Are you sure you want to claim?
-      </TYPE.body>
+      <TYPE.body fontSize={14}>Are you sure you want to claim?</TYPE.body>
       <ModalButtonWrapper>
         <ButtonOutlinedPrimary marginRight="15px" onClick={onDismiss}>
           Cancel
@@ -577,24 +582,33 @@ function SubmittedModalContent({
   submitType,
   onDismiss,
   hash,
-  isError,
+  isError
 }: {
   submitType: ConfirmType
   onDismiss: () => void
   hash: string | undefined
   isError?: boolean
 }) {
-  const notice = submitType===ConfirmType.Vote ? {
-    error: <>Oops! Your balance is not <br /> enought to vote against</>,
-    success: <>
-                  Your vote against
-                  <br /> Is accepted successfully
-                </>
-    } : {
-      error: <>Oops! Claim transaction failed.</>,
-      success: <>Claim Transaction submitted successfully.</>
-    }
-  
+  const notice =
+    submitType === ConfirmType.Vote
+      ? {
+          error: (
+            <>
+              Oops! Your balance is not <br /> enought to vote against
+            </>
+          ),
+          success: (
+            <>
+              Your vote against
+              <br /> Is accepted successfully
+            </>
+          )
+        }
+      : {
+          error: <>Oops! Claim transaction failed.</>,
+          success: <>Claim Transaction submitted successfully.</>
+        }
+
   return (
     <>
       <SubmittedView onDismiss={onDismiss} hash={hash} hideLink isError={isError}>

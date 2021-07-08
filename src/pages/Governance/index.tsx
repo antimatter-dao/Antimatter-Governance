@@ -118,7 +118,7 @@ display: flex
 `
 
 export default function Governance() {
-  const { account,error } = useWeb3React()
+  const { account, error } = useWeb3React()
   const { list: governanceList, loading } = useGovernanceList()
   const [isCreationOpen, setIsCreationOpen] = useState(false)
   const history = useHistory()
@@ -150,9 +150,10 @@ export default function Governance() {
             </RowFixed>
           </RowFixed>
           <HideSmall>
-            <ButtonOutlinedPrimary 
-              disabled={error instanceof UnsupportedChainIdError }
-              onClick={handleOpenCreation} width="180px"
+            <ButtonOutlinedPrimary
+              disabled={error instanceof UnsupportedChainIdError}
+              onClick={handleOpenCreation}
+              width="180px"
             >
               + Create Proposal
             </ButtonOutlinedPrimary>
@@ -186,19 +187,18 @@ function GovernanceCard({
   data: GovernanceData
   onClick: () => void
 }) {
-  const [hover, setHover] = useState(false);
+  const [hover, setHover] = useState(false)
   const handleEnter = () => {
-    setHover(true);
+    setHover(true)
   }
 
   const handleLeave = () => {
-    setHover(false);
+    setHover(false)
   }
 
   return (
     <AppBody maxWidth="340px" gradient1={true} isCard style={{ cursor: 'pointer' }}>
-      <AutoColumn gap="16px" onClick={onClick} onMouseEnter={handleEnter}
-      onMouseLeave={handleLeave}>
+      <AutoColumn gap="16px" onClick={onClick} onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
         <RowBetween>
           <Live color={'Success' === status ? '#728AE0' : 'Failed' === status ? '#FF0000' : ''}>{status}</Live>
           <TYPE.smallGray>#{id}</TYPE.smallGray>
@@ -226,15 +226,20 @@ function GovernanceCard({
         </AutoColumn>
         <DividerThin />
         <TYPE.small fontWeight={500} style={{ textAlign: 'center', margin: '-4px 0 -10px' }}>
-          {hover ? 'show info' : 
-          (<>Time left : <Timer timer={+timeLeft} onZero={() => {}} /></>)}
+          {hover ? (
+            'show info'
+          ) : (
+            <>
+              Time left : <Timer timer={+timeLeft} onZero={() => {}} />
+            </>
+          )}
         </TYPE.small>
       </AutoColumn>
     </AppBody>
   )
 }
 
-export function AlternativeDisplay({ count, loading }: { count: number | undefined; loading: boolean }) {
+export function AlternativeDisplay({ loading }: { count: number | undefined; loading: boolean }) {
   return (
     <AutoColumn justify="center" style={{ marginTop: 100 }}>
       {/* {!loading && count === 0 && (
