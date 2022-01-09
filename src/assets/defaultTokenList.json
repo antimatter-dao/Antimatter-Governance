@@ -1,10 +1,7 @@
 {
   "name": "AntiMatter",
   "logoURI": "",
-  "keywords": [
-    "antimatter",
-    "defi"
-  ],
+  "keywords": ["antimatter", "defi"],
   "timestamp": "2020-09-03T12:37:57.000+00:00",
   "tokens": [
     {
@@ -41,11 +38,11 @@
     },
     {
       "name": "Antimatter.Finance Governance Token",
-      "address": "0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F",
+      "address": "0x9b99cca871be05119b2012fd4474731dd653febe",
       "symbol": "MATTER",
       "decimals": 18,
       "chainId": 1,
-      "logoURI": "https://raw.githubusercontent.com/antimatter-finance/chainswap-assets/main/0x1c9491865a1de77c5b6e19d2e6a5f1d7a6f2b25f.png"
+      "logoURI": "https://raw.githubusercontent.com/antimatter-finance/chainswap-assets/main/0x9b99cca871be05119b2012fd4474731dd653febe.png"
     },
     {
       "name": "Tether USD",

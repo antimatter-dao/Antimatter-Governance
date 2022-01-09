@@ -23,7 +23,7 @@ type ChainTokenList = {
   readonly [chainId in ChainId]: Token[]
 }
 
-const UNI_ADDRESS = '0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F'
+const UNI_ADDRESS = '0x9b99cca871be05119b2012fd4474731dd653febe'
 
 export const Matter = new Token(ChainId.MAINNET, UNI_ADDRESS, 18, 'MATTER', 'Antimatter.Finance Governance Token')
 export const DAI = new Token(ChainId.MAINNET, '0x6B175474E89094C44Da98b954EedeAC495271d0F', 18, 'DAI', 'Dai Stablecoin')
@@ -65,7 +65,7 @@ export const MATTER_OPTION: { [chainId in ChainId]: OptionTypeData | null } = {
     putBalance: '',
     callTotal: '',
     putTotal: '',
-    underlying: '0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F',
+    underlying: '0x9b99cca871be05119b2012fd4474731dd653febe',
     currency: USDT.address,
     priceFloor: '1000000',
     priceCap: '100000000',
@@ -82,7 +82,7 @@ export const MATTER_OPTION: { [chainId in ChainId]: OptionTypeData | null } = {
     putBalance: '',
     callTotal: '',
     putTotal: '',
-    underlying: '0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F',
+    underlying: '0x9b99cca871be05119b2012fd4474731dd653febe',
     currency: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
     priceFloor: '1000000',
     priceCap: '100000000',
@@ -103,7 +103,7 @@ export const PROPOSAL_LENGTH_IN_SECS = AVERAGE_BLOCK_TIME_IN_SECS * PROPOSAL_LEN
 
 export const FACTORY_CHAIN_ID = 1
 export const GOVERNANCE_ADDRESS = '0xDf7d362D1E3e5Db29C0B0A1ae75064523C2B2D9f'
-export const MATTER_ADDRESS = '0x1C9491865a1DE77C5b6e19d2E6a5F1D7a6F2b25F'
+export const MATTER_ADDRESS = '0x9b99cca871be05119b2012fd4474731dd653febe'
 
 // export const FACTORY_CHAIN_ID = 3
 // export const GOVERNANCE_ADDRESS = '0x78fC5460737EB07Ce9e7d954B294ecA7E6203D19'
