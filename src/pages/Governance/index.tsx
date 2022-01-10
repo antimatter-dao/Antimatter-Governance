@@ -10,7 +10,7 @@ import { TYPE } from 'theme'
 import { ButtonOutlined } from 'components/Button'
 import AppBody from 'pages/AppBody'
 import GovernanceProposalCreation from './GovernanceProposalCreation'
-import { GovernanceData, StatusOption, useGovernanceList } from '../../hooks/useGovernanceDetail'
+import { GovernanceData, useGovernanceList } from '../../hooks/useGovernanceDetail'
 // import Loader from 'assets/svg/antimatter_background_logo.svg'
 import { Timer } from 'components/Timer/intex'
 import useTheme from 'hooks/useTheme'
@@ -18,6 +18,7 @@ import { GOVERNANCE_TOKEN } from '../../constants'
 import { useCurrencyBalance } from 'state/wallet/hooks'
 import { isAddress, shortenAddress } from 'utils'
 import { ellipsis } from 'polished'
+import { Box } from '@material-ui/core'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -191,33 +192,19 @@ export default function Governance() {
                     width: '100%'
                   }}
                 >
-                  <RowFixed>
+                  <Box display="grid" gridGap={'36px'}>
                     <TYPE.smallGray fontSize={14} style={{ marginRight: '12px' }}>
                       Your Voting Power:
                     </TYPE.smallGray>
 
-                    <TYPE.smallHeader fontSize={20} fontWeight={500}>
-                      {balance?.toSignificant()} Votes
-                    </TYPE.smallHeader>
-                  </RowFixed>
-                </div>
-                <div
-                  style={{
-                    backgroundColor: theme.bg3,
-                    padding: '20px 24px',
-                    borderRadius: 20,
-                    width: '100%'
-                  }}
-                >
-                  <RowFixed>
-                    <TYPE.smallGray fontSize={14} style={{ marginRight: '12px' }}>
-                      Your Voting Power:
-                    </TYPE.smallGray>
-
-                    <TYPE.smallHeader fontSize={20} fontWeight={500}>
-                      {balance?.toSignificant()} Votes
-                    </TYPE.smallHeader>
-                  </RowFixed>
+                    <TYPE.main fontSize={16} fontWeight={500} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                      <TYPE.main fontSize={24} fontWeight={700}>
+                        {' '}
+                        {balance?.toSignificant()}{' '}
+                      </TYPE.main>
+                      Votes
+                    </TYPE.main>
+                  </Box>
                 </div>
               </DirectionChangeWrapper>
             </RowBetween>
@@ -234,21 +221,6 @@ export default function Governance() {
         <ContentWrapper>
           {governanceList &&
             governanceList.map(data => <GovernanceCard data={data} key={data.id} onClick={handleCardClick(data.id)} />)}
-          <GovernanceCard
-            data={{
-              id: '1',
-              title: '11111',
-              creator: '11111sdfhjhsdglsfhglk',
-              contents: { summary: '111', details: '111', agreeFor: '111', againstFor: '111' },
-              timeLeft: '10101010',
-              voteFor: '1000000000000000000',
-              voteAgainst: '2000000000000000000',
-              totalVotes: '3000000000000000000',
-              status: StatusOption.Live
-            }}
-            key={'1'}
-            onClick={handleCardClick('1')}
-          />
         </ContentWrapper>
         {/* <AlternativeDisplay count={governanceList ? governanceList.length : undefined} loading={loading} /> */}
       </Wrapper>
