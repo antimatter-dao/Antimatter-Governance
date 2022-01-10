@@ -58,7 +58,7 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
 )).attrs({
   'aria-label': 'dialog'
 })`
-  overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
+  overflow-y: ${({ mobile }) => (mobile ? 'auto' : 'hidden')};
 
   &[data-reach-dialog-content] {
     margin: 0 0 2rem 0;
@@ -71,7 +71,7 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
       css`
         min-width: ${minWidth}px;
       `}
-    overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'scroll')};
+    overflow-y: ${({ mobile }) => (mobile ? 'auto' : 'auto')};
     overflow-x: hidden;
 
     align-self: center;
