@@ -15,8 +15,8 @@ import ClaimModal from '../claim/ClaimModal'
 import usePrevious from '../../hooks/usePrevious'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
-import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.svg'
-import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
+// import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.svg'
+// import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
 import useTheme from 'hooks/useTheme'
 import ToggleMenu from './ToggleMenu'
 
@@ -61,7 +61,7 @@ const NetworkInfo: {
   1: {
     color: '#FFFFFF',
     icon: <ETH />,
-    link: 'https://app.antimatter.finance',
+    // link: 'https://app.antimatter.finance',
     title: 'ETH'
   },
   [ChainId.ROPSTEN]: {
@@ -73,14 +73,14 @@ const NetworkInfo: {
     color: '#FFFFFF',
     icon: <ETH />,
     title: 'Rinkeby'
-  },
-  128: {
-    color: '#059BDC',
-    icon: <HECOInvert />,
-    linkIcon: <HECO />,
-    link: 'https://heco.antimatter.finance',
-    title: 'HECO'
   }
+  // 128: {
+  //   color: '#059BDC',
+  //   icon: <HECOInvert />,
+  //   linkIcon: <HECO />,
+  //   link: 'https://heco.antimatter.finance',
+  //   title: 'HECO'
+  // }
   // 56: {
   //   color: '#F0B90B',
   //   icon: <BSCInvert />,
