@@ -1,14 +1,14 @@
 import { ChainId, TokenAmount } from '@uniswap/sdk'
 import React from 'react'
-import { Check, ChevronDown } from 'react-feather'
+// import { Check, ChevronDown } from 'react-feather'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
-import { darken } from 'polished'
+// import { darken } from 'polished'
 import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
 import { useAggregateUniBalance } from '../../state/wallet/hooks'
-import { ExternalLink, TYPE } from '../../theme'
+import { /*ExternalLink,*/ TYPE } from '../../theme'
 import { RowFixed, RowBetween } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
@@ -266,33 +266,33 @@ const NetworkCard = styled.div<{ color?: string }>`
 
 `
 
-const Dropdown = styled.div`
-  z-index: 3;
-  height: 0;
-  position: absolute;
-  border-radius: 14px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  width: 172px;
-  a {
-    color: #ffffff;
-    background-color: ${({ theme }) => theme.bg2};
-    text-decoration: none;
-    padding: 14px 17px;
-    border-bottom: 1px solid ${({ theme }) => theme.text5}
-    transition: 0.5s;
-    display: flex;
-    align-items: center;
-    :last-child{
-      border: none;
-    }
-    :hover {
-      background-color: ${({ theme }) => theme.bg4};
-      color: ${({ theme }) => darken(0.1, theme.primary1)};
-    }
-  }
-`
+// const Dropdown = styled.div`
+//   z-index: 3;
+//   height: 0;
+//   position: absolute;
+//   border-radius: 14px;
+//   overflow: hidden;
+//   display: flex;
+//   flex-direction: column;
+//   width: 172px;
+//   a {
+//     color: #ffffff;
+//     background-color: ${({ theme }) => theme.bg2};
+//     text-decoration: none;
+//     padding: 14px 17px;
+//     border-bottom: 1px solid ${({ theme }) => theme.text5}
+//     transition: 0.5s;
+//     display: flex;
+//     align-items: center;
+//     :last-child{
+//       border: none;
+//     }
+//     :hover {
+//       background-color: ${({ theme }) => theme.bg4};
+//       color: ${({ theme }) => darken(0.1, theme.primary1)};
+//     }
+//   }
+// `
 
 export const StyledMenuButton = styled.button`
   position: relative;
@@ -371,6 +371,7 @@ const MobileHeader = styled.header`
 
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
+  const theme = useTheme()
 
   const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
@@ -391,7 +392,7 @@ export default function Header() {
               {chainId && NetworkInfo[chainId] && (
                 <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
                   {NetworkInfo[chainId as number]?.icon} {NetworkInfo[chainId].title}
-                  <ChevronDown size={18} style={{ marginLeft: '5px' }} />
+                  {/* <ChevronDown size={18} style={{ marginLeft: '5px' }} />
                   <div className="dropdown_wrapper">
                     <Dropdown>
                       {Object.keys(NetworkInfo).map(key => {
@@ -412,7 +413,7 @@ export default function Header() {
                         ) : null
                       })}
                     </Dropdown>
-                  </div>
+                  </div> */}
                 </NetworkCard>
               )}
               {/* </HideSmall> */}
@@ -427,11 +428,12 @@ export default function Header() {
             <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
               {!!account && aggregateBalance && (
                 <UNIWrapper>
-                  <UNIAmount style={{ pointerEvents: 'none' }}>
+                  <UNIAmount style={{ pointerEvents: 'none', color: theme.text1 }}>
                     {account && (
                       // <HideSmall>
                       <TYPE.white
                         style={{
+                          color: theme.text1,
                           paddingRight: '.4rem'
                         }}
                       >

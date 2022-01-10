@@ -8,7 +8,7 @@ import { HideSmall, TYPE } from 'theme'
 import { ButtonOutlinedPrimary } from 'components/Button'
 import AppBody from 'pages/AppBody'
 import GovernanceProposalCreation from './GovernanceProposalCreation'
-import { GovernanceData, useGovernanceList } from '../../hooks/useGovernanceDetail'
+import { GovernanceData, StatusOption, useGovernanceList } from '../../hooks/useGovernanceDetail'
 // import Loader from 'assets/svg/antimatter_background_logo.svg'
 import { useHistory } from 'react-router-dom'
 import { Timer } from 'components/Timer/intex'
@@ -170,6 +170,21 @@ export default function Governance() {
         <ContentWrapper>
           {governanceList &&
             governanceList.map(data => <GovernanceCard data={data} key={data.id} onClick={handleCardClick(data.id)} />)}
+          <GovernanceCard
+            data={{
+              id: '1',
+              title: '11111',
+              creator: '11111',
+              contents: { summary: '111', details: '111', agreeFor: '111', againstFor: '111' },
+              timeLeft: '10101010',
+              voteFor: '1',
+              voteAgainst: '2',
+              totalVotes: '3',
+              status: StatusOption.Live
+            }}
+            key={'1'}
+            onClick={handleCardClick('1')}
+          />
         </ContentWrapper>
         {/* <AlternativeDisplay count={governanceList ? governanceList.length : undefined} loading={loading} /> */}
       </Wrapper>

@@ -19,7 +19,7 @@ interface Users {
   stakeEndTime: number
 }
 
-enum StatusOption {
+export enum StatusOption {
   Live = 'Live',
   Success = 'Success',
   Failed = 'Failed'
