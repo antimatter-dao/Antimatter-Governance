@@ -23,6 +23,9 @@ const Wrapper = styled.div`
   width: 100%;
   margin-bottom: auto;
   max-width: 1280px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding:0 20px;
+  `}
 `
 // const VerticalDivider = styled.div`
 //   width: 1px;
@@ -62,7 +65,7 @@ export const ContentWrapper = styled.div`
   justify-content: center;
   ${({ theme }) => theme.mediaWidth.upToLarge`padding: 30px`}
   ${({ theme }) => theme.mediaWidth.upToSmall`
-  padding: 0 24px 0 82px
+  padding: 20px 24px
   `}
 `
 export const Live = styled.div<{ color?: string }>`
@@ -106,20 +109,32 @@ const Synopsis = styled.div`
   color: #25252550;
 `
 
-const MobileCreate = styled.div`
-  display: none;
-  position: fixed;
-  left: 0;
-  bottom: ${({ theme }) => theme.headerHeight};
-  height: 72px;
-  width: 100%;
-  background-color: ${({ theme }) => theme.bg2};
-  align-items: center;
-  padding: 0 24px;
+const DirectionChangeWrapper = styled(RowBetween)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
-display: flex
-`};
+  flex-direction: column;
+  & > * {
+    margin-top: 12px;
+  };
+  & > *:first-child {
+    margin-top: 0;
+  }
+`}
 `
+
+// const MobileCreate = styled.div`
+//   display: none;
+//   position: fixed;
+//   left: 0;
+//   bottom: ${({ theme }) => theme.headerHeight};
+//   height: 72px;
+//   width: 100%;
+//   background-color: ${({ theme }) => theme.bg2};
+//   align-items: center;
+//   padding: 0 24px;
+//   ${({ theme }) => theme.mediaWidth.upToSmall`
+// display: flex
+// `};
+// `
 
 export default function Governance() {
   const { account, error } = useWeb3React()
@@ -167,7 +182,7 @@ export default function Governance() {
             </RowBetween>
 
             <RowBetween>
-              <div style={{ display: 'flex', width: '100%', gap: 20 }}>
+              <DirectionChangeWrapper style={{ width: '100%', gap: 20 }}>
                 <div
                   style={{
                     backgroundColor: theme.bg3,
@@ -204,7 +219,7 @@ export default function Governance() {
                     </TYPE.smallHeader>
                   </RowFixed>
                 </div>
-              </div>
+              </DirectionChangeWrapper>
             </RowBetween>
           </AutoColumn>
         </div>
@@ -237,11 +252,11 @@ export default function Governance() {
         </ContentWrapper>
         {/* <AlternativeDisplay count={governanceList ? governanceList.length : undefined} loading={loading} /> */}
       </Wrapper>
-      <MobileCreate>
+      {/* <MobileCreate>
         <ButtonOutlined onClick={handleOpenCreation} style={{ color: '#31B047', borderColor: '#31B047', height: 36 }}>
           + Create Proposal
         </ButtonOutlined>
-      </MobileCreate>
+      </MobileCreate> */}
     </>
   )
 }

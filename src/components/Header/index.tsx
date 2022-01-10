@@ -8,7 +8,6 @@ import styled from 'styled-components'
 // import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
 // import { useAggregateUniBalance } from '../../state/wallet/hooks'
-import { /*ExternalLink,*/ TYPE } from '../../theme'
 import { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
@@ -17,8 +16,6 @@ import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 // import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.svg'
 // import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
-import useTheme from 'hooks/useTheme'
-// import ToggleMenu from './ToggleMenu'
 
 interface TabContent {
   title: string
@@ -45,32 +42,27 @@ export const tabs: Tab[] = [
       {
         title: 'Auditing Report',
         link: 'https://github.com/antimatter-finance/antimatter-finance.github.io/blob/main/audit_en.pdf'
-      },
-      {
-        title: 'faq',
-        titleContent: <FAQButton />,
-        route: 'faq'
       }
     ]
   }
 ]
 
 const NetworkInfo: {
-  [key: number]: { title: string; color: string; icon: JSX.Element; link?: string; linkIcon?: JSX.Element }
+  [key: number]: { title: string; color?: string; icon: JSX.Element; link?: string; linkIcon?: JSX.Element }
 } = {
   1: {
-    color: '#FFFFFF',
+    // color: '#FFFFFF',
     icon: <ETH />,
     // link: 'https://app.antimatter.finance',
     title: 'ETH'
   },
   [ChainId.ROPSTEN]: {
-    color: '#FFFFFF',
+    // color: '#FFFFFF',
     icon: <ETH />,
     title: 'Ropsten'
   },
   [ChainId.RINKEBY]: {
-    color: '#FFFFFF',
+    // color: '#FFFFFF',
     icon: <ETH />,
     title: 'Rinkeby'
   }
@@ -138,6 +130,16 @@ const HeaderFrame = styled.div`
 //   `};
 // `
 
+const HeaderWrapper = styled('div')`
+  padding-left: 8px;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 2rem;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  margin-right:0`}
+`
+
 const HeaderElement = styled.div<{
   show?: boolean
 }>`
@@ -152,7 +154,7 @@ const HeaderElement = styled.div<{
     align-items: center;
   `};
   & > div {
-    border: 1px solid ${({ theme, show }) => (show ? theme.text1 : 'transparent')};
+    border: 1px solid ${({ theme, show }) => (show ? 'transparent' : 'transparent')};
     border-radius: 4px;
     height: 32px;
     display: flex;
@@ -169,18 +171,20 @@ const HeaderRow = styled(RowFixed)`
     background: ${theme.bg1}
    align-items: center
   `};
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding-left:0;
+`};
 `
 
 const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: transparent;
-  border-radius: 4px;
+  border-radius: 30px;
+  background-color: ${({ theme }) => theme.bg3};
   white-space: nowrap;
   cursor: pointer;
-  padding: ${({ active }) => (active ? '7px 12px' : 'unset')};
-  border: 1px solid ${({ theme, active }) => (active ? theme.text1 : 'transparent')};
+  border: 1px solid ${({ theme, active }) => (active ? 'transparent' : 'transparent')};
 `
 
 // const UNIAmount = styled.div`
@@ -220,7 +224,7 @@ const NetworkCard = styled.div<{ color?: string }>`
   justify-content: center;
   border-radius: 4px;
   align-items: center;
-  background-color: ${({ color }) => color ?? 'rgba(255, 255, 255, 0.12)'}
+  background-color: ${({ color, theme }) => color ?? theme.bg3}
   font-size: 13px;
   font-weight: 500;
   position: relative;
@@ -247,7 +251,6 @@ const NetworkCard = styled.div<{ color?: string }>`
       &>div{
         height: auto;
         margin-top: 10px;
-        border: 1px solid ${({ theme }) => theme.text5};
         a{
         position: relative;
           & >svg{
@@ -260,7 +263,14 @@ const NetworkCard = styled.div<{ color?: string }>`
     }
   }
   ${({ theme }) => theme.mediaWidth.upToSmall`
-    margin: 0
+    margin: 0;
+    margin-right:10px;
+    font-size:12px!important;
+    font-weight:500!important;
+    & > svg:first-child {
+      height: 14px;
+      width: 14px;
+    }
 `};
 
 `
@@ -326,59 +336,12 @@ const StyledLogo = styled(Logo)`
   margin-right: 60px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
   width: 120px;
+  margin-right: 15px;
 `};
 `
 
-function FAQButton() {
-  const theme = useTheme()
-  return (
-    <RowFixed>
-      <RowFixed
-        justify="center"
-        style={{
-          borderRadius: '50%',
-          border: `1px solid ${theme.primary1}`,
-          width: '18px',
-          height: '18px',
-          marginRight: '12px'
-        }}
-      >
-        <TYPE.body fontSize={14} color={theme.primary1}>
-          ?
-        </TYPE.body>
-      </RowFixed>
-      FAQ
-    </RowFixed>
-  )
-}
-
-// const MobileHeader = styled.header`
-//   width:100%;
-//   display:flex;
-//   justify-content:space-between;
-//   align-items: center;
-//   padding: 0 24px;
-//   position:relative;
-//   background-color: ${({ theme }) => theme.bg1}
-//   height:${({ theme }) => theme.mobileHeaderHeight}
-//   position:fixed;
-//   top: 0;
-//   left: 0;
-//   z-index: 100;
-//   display: none;
-//   ${({ theme }) => theme.mediaWidth.upToLarge`
-//     display: inherit
-// `};
-// `
-
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
-  // const theme = useTheme()
-
-  // const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
-
-  // const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
-  // const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
     <HeaderFrame>
@@ -387,7 +350,7 @@ export default function Header() {
         <Link to={'/'}>
           <StyledLogo />
         </Link>
-        <div style={{ paddingLeft: 8, display: 'flex', alignItems: 'center', marginLeft: 'auto', marginRight: '2rem' }}>
+        <HeaderWrapper>
           {/* <HeaderControls> */}
           <HeaderElement show={!!account}>
             {/* <HideSmall> */}
@@ -462,7 +425,7 @@ export default function Header() {
             <Web3Status />
           </AccountElement>
           {/* </HeaderControls> */}
-        </div>
+        </HeaderWrapper>
       </HeaderRow>
       {/* <MobileHeader>
         <RowBetween>

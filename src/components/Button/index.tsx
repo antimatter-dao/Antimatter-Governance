@@ -190,20 +190,16 @@ export const ButtonOutlined = styled(Base)`
   color: ${({ theme }) => theme.text1};
 
   &:focus {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
     border: 1px solid ${({ theme }) => theme.bg4};
   }
   &:hover {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
     border: 1px solid ${({ theme }) => theme.bg4};
   }
   &:active {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
   }
   &:disabled {
     opacity: 50%;
     cursor: auto;
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.bg2};
   }
 `
 
@@ -214,12 +210,11 @@ export const ButtonOutlinedPrimary = styled(Base)`
 
   :hover,
   :focus {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.primary4};
     border-color: ${({ theme }) => theme.primary4};
     color: ${({ theme }) => theme.primary4};
   }
   :active {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
+    box-shadow: 0 0 0 1px ${({ theme }) => theme.primary3};
   }
 
   &:disabled {

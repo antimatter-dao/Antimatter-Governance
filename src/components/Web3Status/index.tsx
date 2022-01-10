@@ -1,15 +1,15 @@
-import { AbstractConnector } from '@web3-react/abstract-connector'
+// import { AbstractConnector } from '@web3-react/abstract-connector'
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { darken } from 'polished'
 import React, { useMemo } from 'react'
 import { Activity } from 'react-feather'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import CoinbaseWalletIcon from '../../assets/images/coinbaseWalletIcon.svg'
-import FortmaticIcon from '../../assets/images/fortmaticIcon.png'
-import PortisIcon from '../../assets/images/portisIcon.png'
-import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
-import { fortmatic, injected, portis, walletconnect, walletlink } from '../../connectors'
+// import CoinbaseWalletIcon from '../../assets/images/coinbaseWalletIcon.svg'
+// import FortmaticIcon from '../../assets/images/fortmaticIcon.png'
+// import PortisIcon from '../../assets/images/portisIcon.png'
+// import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
+// import { fortmatic, injected, portis, walletconnect, walletlink } from '../../connectors'
 import { NetworkContextName } from '../../constants'
 import useENSName from '../../hooks/useENSName'
 import { useHasSocks } from '../../hooks/useSocksBalance'
@@ -19,6 +19,7 @@ import { TransactionDetails } from '../../state/transactions/reducer'
 import { shortenAddress } from '../../utils'
 import { ButtonOutlined } from '../Button'
 import Copy from '../AccountDetails/Copy'
+import accountControlUrl from 'assets/svg/account_control.svg'
 
 // import Identicon from '../Identicon'
 import Loader from '../Loader'
@@ -28,15 +29,15 @@ import WalletModal from '../WalletModal'
 import { TYPE } from 'theme'
 import useTheme from 'hooks/useTheme'
 
-const IconWrapper = styled.div<{ size?: number }>`
-  ${({ theme }) => theme.flexColumnNoWrap};
-  align-items: center;
-  justify-content: center;
-  & > * {
-    height: ${({ size }) => (size ? size + 'px' : '32px')};
-    width: ${({ size }) => (size ? size + 'px' : '32px')};
-  }
-`
+// const IconWrapper = styled.div<{ size?: number }>`
+//   ${({ theme }) => theme.flexColumnNoWrap};
+//   align-items: center;
+//   justify-content: center;
+//   & > * {
+//     height: ${({ size }) => (size ? size + 'px' : '32px')};
+//     width: ${({ size }) => (size ? size + 'px' : '32px')};
+//   }
+// `
 
 const Web3StatusGeneric = styled(ButtonOutlined)`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -101,8 +102,7 @@ const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
     box-shadow: none
   }
   & p{
-    margin: 0;
-    margin-left:.5rem
+    margin: 0 .5rem;
   }
 `
 
@@ -115,6 +115,16 @@ const Text = styled.p`
   font-size: 13px;
   width: fit-content;
   font-weight: 400;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  font-size:12px
+  `}
+`
+
+const StyledAccountControl = styled('img')`
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    height:25px;
+    width:25px
+`}
 `
 
 const NetworkIcon = styled(Activity)`
@@ -122,15 +132,6 @@ const NetworkIcon = styled(Activity)`
   margin-right: 0.5rem;
   width: 16px;
   height: 16px;
-`
-
-const Dot = styled.span`
-  width: 12px;
-  height: 12px;
-  background: linear-gradient(135deg, #ffffff 4.17%, rgba(255, 255, 255, 0) 75%);
-  border: 0.6px solid #ffffff;
-  box-sizing: border-box;
-  border-radius: 50%;
 `
 
 const HideSmall = styled.span`
@@ -151,40 +152,40 @@ const SOCK = (
 )
 
 // eslint-disable-next-line react/prop-types
-function StatusIcon({ connector }: { connector: AbstractConnector }) {
-  if (connector === injected) {
-    return <Dot />
-  } else if (connector === walletconnect) {
-    return (
-      <IconWrapper size={16}>
-        <img src={WalletConnectIcon} alt={''} />
-      </IconWrapper>
-    )
-  } else if (connector === walletlink) {
-    return (
-      <IconWrapper size={16}>
-        <img src={CoinbaseWalletIcon} alt={''} />
-      </IconWrapper>
-    )
-  } else if (connector === fortmatic) {
-    return (
-      <IconWrapper size={16}>
-        <img src={FortmaticIcon} alt={''} />
-      </IconWrapper>
-    )
-  } else if (connector === portis) {
-    return (
-      <IconWrapper size={16}>
-        <img src={PortisIcon} alt={''} />
-      </IconWrapper>
-    )
-  }
-  return null
-}
+// function StatusIcon({ connector }: { connector: AbstractConnector }) {
+//   if (connector === injected) {
+//     return <Dot />
+//   } else if (connector === walletconnect) {
+//     return (
+//       <IconWrapper size={16}>
+//         <img src={WalletConnectIcon} alt={''} />
+//       </IconWrapper>
+//     )
+//   } else if (connector === walletlink) {
+//     return (
+//       <IconWrapper size={16}>
+//         <img src={CoinbaseWalletIcon} alt={''} />
+//       </IconWrapper>
+//     )
+//   } else if (connector === fortmatic) {
+//     return (
+//       <IconWrapper size={16}>
+//         <img src={FortmaticIcon} alt={''} />
+//       </IconWrapper>
+//     )
+//   } else if (connector === portis) {
+//     return (
+//       <IconWrapper size={16}>
+//         <img src={PortisIcon} alt={''} />
+//       </IconWrapper>
+//     )
+//   }
+//   return null
+// }
 
 function Web3StatusInner() {
   const { t } = useTranslation()
-  const { account, connector, error } = useWeb3React()
+  const { account, error } = useWeb3React()
 
   const { ENSName } = useENSName(account ?? undefined)
 
@@ -205,7 +206,8 @@ function Web3StatusInner() {
     return (
       <>
         <Web3StatusConnected id="web3-status-connected" onClick={toggleWalletModal} pending={hasPendingTransactions}>
-          {!hasPendingTransactions && connector && <StatusIcon connector={connector} />}
+          <StyledAccountControl alt="" src={accountControlUrl} />
+          {/* {!hasPendingTransactions && connector && <StatusIcon connector={connector} />} */}
           {hasPendingTransactions ? (
             <RowBetween>
               <Loader stroke={theme.text1} /> <Text style={{ marginLeft: '12px' }}>{pending?.length} Pending</Text>
