@@ -1,24 +1,24 @@
-import { ChainId, TokenAmount } from '@uniswap/sdk'
+import { ChainId } from '@uniswap/sdk'
 import React from 'react'
 // import { Check, ChevronDown } from 'react-feather'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 // import { useTranslation } from 'react-i18next'
 // import { darken } from 'polished'
-import { CountUp } from 'use-count-up'
+// import { CountUp } from 'use-count-up'
 import { useActiveWeb3React } from '../../hooks'
-import { useAggregateUniBalance } from '../../state/wallet/hooks'
+// import { useAggregateUniBalance } from '../../state/wallet/hooks'
 import { /*ExternalLink,*/ TYPE } from '../../theme'
-import { RowFixed, RowBetween } from '../Row'
+import { RowFixed } from '../Row'
 import Web3Status from '../Web3Status'
 import ClaimModal from '../claim/ClaimModal'
-import usePrevious from '../../hooks/usePrevious'
+// import usePrevious from '../../hooks/usePrevious'
 import { ReactComponent as Logo } from '../../assets/svg/antimatter_logo.svg'
 import { ReactComponent as ETH } from '../../assets/svg/eth_logo.svg'
 // import { ReactComponent as HECOInvert } from '../../assets/svg/huobi_inverted.svg'
 // import { ReactComponent as HECO } from '../../assets/svg/huobi.svg'
 import useTheme from 'hooks/useTheme'
-import ToggleMenu from './ToggleMenu'
+// import ToggleMenu from './ToggleMenu'
 
 interface TabContent {
   title: string
@@ -115,28 +115,28 @@ const HeaderFrame = styled.div`
   `}
 `
 
-const HeaderControls = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-self: flex-end;
-  align-items: center;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    height: ${theme.headerHeight};
-    flex-direction: row;
-    align-items: center;
-    justify-self: center;
-    padding: 1rem;
-    position: fixed;
-    bottom: 0px;
-    left: 0px;
-    width: 100%;
-    z-index: 99;
-    background-color: ${theme.bg2};
-    justify-content: center;
-    border-top: 1px solid;
-    border-top-color: #303030;
-  `};
-`
+// const HeaderControls = styled.div`
+//   display: flex;
+//   flex-direction: row;
+//   justify-self: flex-end;
+//   align-items: center;
+//   ${({ theme }) => theme.mediaWidth.upToLarge`
+//     height: ${theme.headerHeight};
+//     flex-direction: row;
+//     align-items: center;
+//     justify-self: center;
+//     padding: 1rem;
+//     position: fixed;
+//     bottom: 0px;
+//     left: 0px;
+//     width: 100%;
+//     z-index: 99;
+//     background-color: ${theme.bg1};
+//     justify-content: center;
+//     border-top: 1px solid;
+//     border-top-color: #25252510;
+//   `};
+// `
 
 const HeaderElement = styled.div<{
   show?: boolean
@@ -163,11 +163,10 @@ const HeaderElement = styled.div<{
 
 const HeaderRow = styled(RowFixed)`
   width: 100%;
-  min-width: 1100px;
   padding-left: 2rem;
   align-items: flex-start
     ${({ theme }) => theme.mediaWidth.upToLarge`
-    background: red
+    background: ${theme.bg1}
    align-items: center
   `};
 `
@@ -184,25 +183,25 @@ const AccountElement = styled.div<{ active: boolean }>`
   border: 1px solid ${({ theme, active }) => (active ? theme.text1 : 'transparent')};
 `
 
-const UNIAmount = styled.div`
-  color: white;
-  font-size: 13px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  background-color: transparent;
-  &:after {
-    content: '';
-    border-right: 1px solid ${({ theme }) => theme.text1};
-    margin: 0 16px;
-    height: 16px;
-  }
-`
+// const UNIAmount = styled.div`
+//   color: white;
+//   font-size: 13px;
+//   display: flex;
+//   flex-direction: row;
+//   align-items: center;
+//   background-color: transparent;
+//   &:after {
+//     content: '';
+//     border-right: 1px solid ${({ theme }) => theme.text1};
+//     margin: 0 16px;
+//     height: 16px;
+//   }
+// `
 
-const UNIWrapper = styled.span`
-  width: fit-content;
-  position: relative;
-`
+// const UNIWrapper = styled.span`
+//   width: fit-content;
+//   position: relative;
+// `
 
 // const HideSmall = styled.span`
 //   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -325,6 +324,9 @@ export const StyledMenuButton = styled.button`
 
 const StyledLogo = styled(Logo)`
   margin-right: 60px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  width: 120px;
+`};
 `
 
 function FAQButton() {
@@ -350,33 +352,33 @@ function FAQButton() {
   )
 }
 
-const MobileHeader = styled.header`
-  width:100%;
-  display:flex;
-  justify-content:space-between;
-  align-items: center;
-  padding: 0 24px;
-  position:relative;
-  background-color: ${({ theme }) => theme.bg1}
-  height:${({ theme }) => theme.mobileHeaderHeight}
-  position:fixed;
-  top: 0;
-  left: 0;
-  z-index: 100;
-  display: none;
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-    display: inherit
-`};
-`
+// const MobileHeader = styled.header`
+//   width:100%;
+//   display:flex;
+//   justify-content:space-between;
+//   align-items: center;
+//   padding: 0 24px;
+//   position:relative;
+//   background-color: ${({ theme }) => theme.bg1}
+//   height:${({ theme }) => theme.mobileHeaderHeight}
+//   position:fixed;
+//   top: 0;
+//   left: 0;
+//   z-index: 100;
+//   display: none;
+//   ${({ theme }) => theme.mediaWidth.upToLarge`
+//     display: inherit
+// `};
+// `
 
 export default function Header() {
   const { account, chainId } = useActiveWeb3React()
-  const theme = useTheme()
+  // const theme = useTheme()
 
-  const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
+  // const aggregateBalance: TokenAmount | undefined = useAggregateUniBalance()
 
-  const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
-  const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
+  // const countUpValue = aggregateBalance?.toFixed(0) ?? '0'
+  // const countUpValuePrevious = usePrevious(countUpValue) ?? '0'
 
   return (
     <HeaderFrame>
@@ -386,13 +388,13 @@ export default function Header() {
           <StyledLogo />
         </Link>
         <div style={{ paddingLeft: 8, display: 'flex', alignItems: 'center', marginLeft: 'auto', marginRight: '2rem' }}>
-          <HeaderControls>
-            <HeaderElement show={!!account}>
-              {/* <HideSmall> */}
-              {chainId && NetworkInfo[chainId] && (
-                <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
-                  {NetworkInfo[chainId as number]?.icon} {NetworkInfo[chainId].title}
-                  {/* <ChevronDown size={18} style={{ marginLeft: '5px' }} />
+          {/* <HeaderControls> */}
+          <HeaderElement show={!!account}>
+            {/* <HideSmall> */}
+            {chainId && NetworkInfo[chainId] && (
+              <NetworkCard title={NetworkInfo[chainId].title} color={NetworkInfo[chainId as number]?.color}>
+                {NetworkInfo[chainId as number]?.icon} {NetworkInfo[chainId].title}
+                {/* <ChevronDown size={18} style={{ marginLeft: '5px' }} />
                   <div className="dropdown_wrapper">
                     <Dropdown>
                       {Object.keys(NetworkInfo).map(key => {
@@ -414,63 +416,62 @@ export default function Header() {
                       })}
                     </Dropdown>
                   </div> */}
-                </NetworkCard>
-              )}
-              {/* </HideSmall> */}
-            </HeaderElement>
-            {/* <HeaderElementWrap>
+              </NetworkCard>
+            )}
+            {/* </HideSmall> */}
+          </HeaderElement>
+          {/* <HeaderElementWrap>
           <StyledMenuButton onClick={() => toggleDarkMode()}>
             {darkMode ? <Moon size={20} /> : <Sun size={20} />}
           </StyledMenuButton>
           <Menu />
         </HeaderElementWrap> */}
 
-            <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
-              {!!account && aggregateBalance && (
-                <UNIWrapper>
-                  <UNIAmount style={{ pointerEvents: 'none', color: theme.text1 }}>
-                    {account && (
-                      // <HideSmall>
-                      <TYPE.white
-                        style={{
-                          color: theme.text1,
-                          paddingRight: '.4rem'
-                        }}
-                      >
-                        <CountUp
-                          key={countUpValue}
-                          isCounting
-                          start={parseFloat(countUpValuePrevious)}
-                          end={parseFloat(countUpValue)}
-                          thousandsSeparator={','}
-                          duration={1}
-                        />
-                      </TYPE.white>
-                      // </HideSmall>
-                    )}
-                    MATTER
-                  </UNIAmount>
-                  {/* <CardNoise /> */}
-                </UNIWrapper>
-              )}
-              {/* {account && userEthBalance ? (
+          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+            {/* {!!account && aggregateBalance && (
+              <UNIWrapper>
+                <UNIAmount style={{ pointerEvents: 'none', color: theme.text1 }}>
+                  {account && (
+                    // <HideSmall>
+                    <TYPE.white
+                      style={{
+                        color: theme.text1,
+                        paddingRight: '.4rem'
+                      }}
+                    >
+                      <CountUp
+                        key={countUpValue}
+                        isCounting
+                        start={parseFloat(countUpValuePrevious)}
+                        end={parseFloat(countUpValue)}
+                        thousandsSeparator={','}
+                        duration={1}
+                      />
+                    </TYPE.white>
+                    // </HideSmall>
+                  )}
+                  MATTER
+                </UNIAmount>
+              </UNIWrapper>
+            )} */}
+            {/* {account && userEthBalance ? (
                 <BalanceText style={{ flexShrink: 0 }} fontWeight={500}>
                   {userEthBalance?.toSignificant(4)} ETH
                 </BalanceText>
               ) : null} */}
-              <Web3Status />
-            </AccountElement>
-          </HeaderControls>
+            <Web3Status />
+          </AccountElement>
+          {/* </HeaderControls> */}
         </div>
       </HeaderRow>
-      <MobileHeader>
+      {/* <MobileHeader>
         <RowBetween>
           <Link to={'/'}>
             <StyledLogo />
           </Link>
           <ToggleMenu />
         </RowBetween>
-      </MobileHeader>
+      </MobileHeader> */}
     </HeaderFrame>
   )
 }

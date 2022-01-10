@@ -64,11 +64,11 @@ const HeaderWrapper = styled.div`
   justify-content: space-between;
   flex-direction: column;
   ${({ theme }) => theme.flexRowNoWrap}
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  height:0;
-  overflow: hidden
-  `}
 `
+// ${({ theme }) => theme.mediaWidth.upToSmall`
+// height:0;
+// overflow: hidden
+// `}
 
 const BodyWrapper = styled.div`
   display: flex;
@@ -81,12 +81,6 @@ const BodyWrapper = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-  margin-bottom: ${({ theme }) => theme.headerHeight}
-  `}
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-  margin-top: ${({ theme }) => theme.mobileHeaderHeight}
-  `};
 `
 
 export const Marginer = styled.div`

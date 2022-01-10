@@ -8,12 +8,12 @@ import { ButtonEmpty, ButtonOutlinedPrimary, ButtonPrimary } from 'components/Bu
 import { AutoColumn } from 'components/Column'
 import { HideSmall, ShowSmall, TYPE } from 'theme'
 import { ProgressBar } from './'
-import { GradientCard, OutlineCard } from 'components/Card'
+import Card from 'components/Card'
 import TransactionConfirmationModal from 'components/TransactionConfirmationModal'
 import { SubmittedView } from 'components/ModalViews'
 import Modal from 'components/Modal'
 import { useGovernanceDetails, useUserStaking } from '../../hooks/useGovernanceDetail'
-import { JSBI, TokenAmount } from '@uniswap/sdk'
+import { CurrencyAmount, JSBI, TokenAmount } from '@uniswap/sdk'
 import CurrencyInputPanel from 'components/CurrencyInputPanel'
 import { GOVERNANCE_ADDRESS, GOVERNANCE_TOKEN, FACTORY_CHAIN_ID } from '../../constants'
 import { useCurrencyBalance } from '../../state/wallet/hooks'
@@ -26,6 +26,9 @@ import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { RouteComponentProps, useHistory } from 'react-router-dom'
 import { getDeltaTime, Timer } from 'components/Timer/intex'
 import { Dots } from 'components/swap/styleds'
+import { isAddress, shortenAddress } from 'utils'
+import CopyHelper from 'components/AccountDetails/Copy'
+import { Badge, Box } from '@material-ui/core'
 
 enum VoteOption {
   FOR = 'for',
@@ -62,15 +65,21 @@ const Wrapper = styled.div`
   `};
 `
 
-const VoteOptionCard = styled.div<{ selected?: boolean }>`
+const BackButtonWrapper = styled(RowBetween)`
+  width: max-content;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  width:100%`}
+`
+
+const VoteOptionCard = styled.div<{ selected?: boolean; disabled?: boolean }>`
   border-radius: 14px;
-  border: 1px solid ${({ theme, selected }) => (selected ? theme.primary1 : 'transparent')};
+  border: 1px solid ${({ theme, selected, disabled }) => (selected && !disabled ? theme.primary1 : theme.text4)};
   background-color: ${({ theme }) => theme.translucent};
   width: 160px;
   height: 52px;
   display: flex;
   font-size: 14px;
-  color: ${({ theme, selected }) => (selected ? theme.text1 : theme.text3)};
+  color: ${({ theme, selected, disabled }) => (selected && !disabled ? theme.text1 : theme.text3)};
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -79,14 +88,14 @@ const VoteOptionCard = styled.div<{ selected?: boolean }>`
   }
   :hover {
     cursor: pointer;
-    border: 1px solid ${({ theme }) => theme.primary1};
+    border: 1px solid ${({ theme, disabled }) => (disabled ? theme.text4 : theme.primary1)};
   }
   ${({ theme }) => theme.mediaWidth.upToSmall`
   width: 100%;
 `}
 `
 
-const VoteOptionWrapper = styled(RowBetween)`
+const DirectionChangeWrapper = styled(RowBetween)`
   ${({ theme }) => theme.mediaWidth.upToSmall`
   flex-direction: column;
   & > * {
@@ -336,142 +345,212 @@ export default function GovernancePageDetail({
     return null
   }
 
-  const { creator, title, voteFor, status, contents, voteAgainst, totalVotes, timeLeft } = data
+  const { creator, title, voteFor, status, contents, voteAgainst, totalVotes, timeLeft, id } = data
+  const disabled = 'Live' !== status
   const voteForPercentage = `${calcVoteForPercentage(VoteOption.FOR, voteFor, voteAgainst)}%`
   const voteAgainstPercentage = `${calcVoteForPercentage(VoteOption.AGAINST, voteFor, voteAgainst)}%`
 
   return (
     <>
       <Wrapper>
-        <RowBetween>
-          <HideSmall>
-            <ButtonEmpty width="106px" color={theme.text1} onClick={handleBackClick}>
-              <ChevronLeft style={{ marginRight: 16 }} />
-              Back
-            </ButtonEmpty>
-          </HideSmall>
-          <Live color={StatusOption.Success === status ? '#728AE0' : StatusOption.Failed === status ? '#FF0000' : ''}>
-            {status}
-          </Live>
-          <ShowSmall>
-            <ButtonEmpty width="auto" padding="0" onClick={handleBackClick}>
-              <X color={theme.text3} size={24} />
-            </ButtonEmpty>
-          </ShowSmall>
-          <HideSmall>
-            <div style={{ width: 106 }} />
-          </HideSmall>
-        </RowBetween>
-        <AutoColumn style={{ width: 760 }} justify="center" gap="40px">
-          <AutoColumn gap="28px">
-            <div>
-              <TYPE.largeHeader fontSize={36} textAlign="center" fontWeight={300}>
-                {title}
-              </TYPE.largeHeader>
-              <TYPE.smallGray textAlign="center" marginTop="4px">
-                {creator}
-              </TYPE.smallGray>
-            </div>
-            <TYPE.body lineHeight="25px" textAlign="center">
-              {contents?.summary}
-            </TYPE.body>
-            <TYPE.body lineHeight="25px" textAlign="center">
-              {contents?.details}
-            </TYPE.body>
-          </AutoColumn>
-          <AutoColumn style={{ width: '100%' }} gap="16px">
-            <RowBetween>
-              <AutoColumn gap="4px" style={{ width: 220 }}>
-                <TYPE.smallGray fontSize={14}>Votes For:</TYPE.smallGray>
-                <TYPE.mediumHeader>
-                  {toNumber(voteFor)} &nbsp;MATTER
-                  <span style={{ color: theme.text3, fontWeight: 100, marginLeft: 10 }}>{voteForPercentage}</span>
-                </TYPE.mediumHeader>
-              </AutoColumn>
-              <HideSmall>
-                <OutlineCard style={{ width: 'auto', padding: '8px 38px' }}>
-                  <TYPE.largeHeader color={theme.text1} fontWeight={100} textAlign="center">
-                    {toNumber(totalVotes)}&nbsp;Votes
-                  </TYPE.largeHeader>
-                </OutlineCard>
-              </HideSmall>
-              <AutoColumn gap="4px" style={{ width: 220, textAlign: 'right' }}>
-                <TYPE.smallGray fontSize={14}>Votes Against:</TYPE.smallGray>
-                <TYPE.mediumHeader>
-                  {toNumber(voteAgainst)} &nbsp;MATTER
-                  <span style={{ color: theme.text3, fontWeight: 100, marginLeft: 10 }}>{voteAgainstPercentage}</span>
-                </TYPE.mediumHeader>
-              </AutoColumn>
-            </RowBetween>
-            <ProgressBar isLarge leftPercentage={voteForPercentage} />
-            <ShowSmall>
-              <OutlineCard style={{ width: '100%', padding: '8px 38px' }}>
-                <TYPE.largeHeader color={theme.text1} fontWeight={100} textAlign="center">
-                  {totalVotes}&nbsp;Votes
+        <Card color={theme.bg1}>
+          <AutoColumn>
+            <DirectionChangeWrapper>
+              <BackButtonWrapper>
+                <ButtonEmpty width="106px" color={theme.text1} onClick={handleBackClick} marginRight={'auto'}>
+                  <ChevronLeft style={{ marginRight: 16 }} />
+                  Back
+                </ButtonEmpty>
+
+                <ShowSmall>
+                  <Box display={'flex'} gridGap={8}>
+                    <Live color={'Success' === status ? '#728AE0' : 'Failed' === status ? '#FF0000' : ''}>
+                      {'Live' === status ? <Timer timer={+timeLeft} onZero={() => {}} /> : status}
+                    </Live>
+                    <Badge
+                      style={{
+                        color: theme.text1,
+                        background: '#25252510',
+                        padding: '6px 15px',
+                        borderRadius: 30,
+                        fontSize: 12
+                      }}
+                    >
+                      #{id}
+                    </Badge>
+                    {/* <ShowSmall>
+                  <ButtonEmpty width="auto" padding="0" onClick={handleBackClick}>
+                    <X color={theme.text3} size={24} />
+                  </ButtonEmpty>
+                </ShowSmall> */}
+                  </Box>
+                </ShowSmall>
+              </BackButtonWrapper>
+
+              <div
+                style={{
+                  flexGrow: 1,
+                  color: theme.text1,
+                  display: 'grid',
+                  justifyItems: 'center',
+                  gap: 14,
+                  padding: '0 15px'
+                }}
+              >
+                <TYPE.largeHeader fontSize={36} textAlign="center" fontWeight={300} marginTop={16}>
+                  {title}
                 </TYPE.largeHeader>
-              </OutlineCard>
-            </ShowSmall>
+
+                <CopyHelper toCopy={creator}>
+                  <TYPE.smallGray textAlign="center" marginTop="4px">
+                    {isAddress(creator) ? shortenAddress(creator) : creator}{' '}
+                  </TYPE.smallGray>
+                </CopyHelper>
+              </div>
+              <HideSmall>
+                <Box display={'flex'} gridGap={8}>
+                  <Live color={'Success' === status ? '#728AE0' : 'Failed' === status ? '#FF0000' : ''}>
+                    {'Live' === status ? <Timer timer={+timeLeft} onZero={() => {}} /> : status}
+                  </Live>
+                  <Badge
+                    style={{
+                      color: theme.text1,
+                      background: '#25252510',
+                      padding: '6px 15px',
+                      borderRadius: 30,
+                      fontSize: 12
+                    }}
+                  >
+                    #{id}
+                  </Badge>
+                  {/* <ShowSmall>
+                  <ButtonEmpty width="auto" padding="0" onClick={handleBackClick}>
+                    <X color={theme.text3} size={24} />
+                  </ButtonEmpty>
+                </ShowSmall> */}
+                </Box>
+              </HideSmall>
+            </DirectionChangeWrapper>
+            <Box marginTop={'50px'}>
+              <DirectionChangeWrapper style={{ gap: 20 }}>
+                <AutoColumn gap="28px" style={{ width: '100%' }}>
+                  <TYPE.body lineHeight="25px" textAlign="center" style={{ wordBreak: 'break-all' }}>
+                    {contents?.summary}
+                  </TYPE.body>
+                  <TYPE.body lineHeight="25px" textAlign="center" style={{ wordBreak: 'break-all' }}>
+                    {contents?.details}
+                  </TYPE.body>
+                </AutoColumn>
+                <Card color={theme.bg3}>
+                  <AutoColumn style={{ width: '100%' }} gap="16px">
+                    <TYPE.largeHeader color={theme.text1} fontWeight={100} textAlign="center">
+                      {toNumber(totalVotes)}&nbsp;Votes
+                    </TYPE.largeHeader>
+
+                    <RowBetween>
+                      <AutoColumn gap="4px" style={{ width: 220 }}>
+                        <TYPE.mediumHeader textAlign={'left'}>
+                          <span style={{ fontWeight: 100, marginLeft: 10 }}>{voteForPercentage}</span>
+                        </TYPE.mediumHeader>
+                        <TYPE.smallGray fontSize={14}>Votes For:</TYPE.smallGray>
+                      </AutoColumn>
+                      <AutoColumn gap="4px" style={{ width: 220, textAlign: 'right' }}>
+                        <TYPE.mediumHeader>
+                          <span style={{ fontWeight: 100, marginLeft: 10 }}>{voteAgainstPercentage}</span>
+                        </TYPE.mediumHeader>
+                        <TYPE.smallGray fontSize={14}>Votes Against:</TYPE.smallGray>
+                      </AutoColumn>
+                    </RowBetween>
+                    <ProgressBar isLarge leftPercentage={voteForPercentage} />
+                    <RowBetween>
+                      <TYPE.small fontSize={12} fontWeight={500} display="flex" style={{ alignItems: 'center' }}>
+                        <TYPE.main fontSize={16} fontWeight={700}>
+                          {voteFor ? CurrencyAmount.ether(voteFor).toSignificant(2, { groupSeparator: ',' }) : '--'}
+                        </TYPE.main>{' '}
+                        &nbsp;MATTER
+                      </TYPE.small>
+                      <TYPE.small fontSize={12} fontWeight={500} display="flex" style={{ alignItems: 'center' }}>
+                        <TYPE.main fontSize={16} fontWeight={700}>
+                          {voteFor ? CurrencyAmount.ether(voteAgainst).toSignificant(2, { groupSeparator: ',' }) : '--'}{' '}
+                        </TYPE.main>
+                        &nbsp;MATTER
+                      </TYPE.small>
+                    </RowBetween>
+                  </AutoColumn>
+                </Card>
+              </DirectionChangeWrapper>
+            </Box>
           </AutoColumn>
-          <GradientCard>
-            <AutoColumn gap="24px" style={{ maxWidth: 468, margin: '4px auto' }} justify="center">
-              <TYPE.mediumHeader textAlign="center">Make Your Decision</TYPE.mediumHeader>
-              <TYPE.small textAlign="center">
-                Time left : <Timer timer={+timeLeft} onZero={() => {}} />
-              </TYPE.small>
-              <VoteOptionWrapper style={{ padding: '0 20px', marginBottom: -15, fontSize: 12 }}>
-                <span>My votes: {toNumber(userStaking.totalYes)}</span>
-                <span>My votes: {toNumber(userStaking.totalNo)}</span>
-              </VoteOptionWrapper>
-              <VoteOptionWrapper style={{ padding: '0 20px' }}>
-                <VoteOptionCard selected={selected === VoteOption.FOR} onClick={handleSelect(VoteOption.FOR)}>
-                  Vote For
-                  {status === StatusOption.Live && selected === VoteOption.FOR && (
-                    <TYPE.small>{Number(voteValue) ? voteValue : '-'} MATTER</TYPE.small>
-                  )}
-                </VoteOptionCard>
-                <VoteOptionCard selected={selected === VoteOption.AGAINST} onClick={handleSelect(VoteOption.AGAINST)}>
-                  Vote Against
-                  {status === StatusOption.Live && selected === VoteOption.AGAINST && (
-                    <TYPE.small>{Number(voteValue) ? voteValue : '-'} MATTER</TYPE.small>
-                  )}
-                </VoteOptionCard>
-              </VoteOptionWrapper>
-              {data.status === StatusOption.Live && (
-                <div style={{ width: 'calc(100% - 40px)' }}>
-                  <CurrencyInputPanel
-                    value={voteValue}
-                    onUserInput={value => {
-                      setVoteValue(value)
-                    }}
-                    onMax={() => {
-                      setVoteValue(balance ? balance.toSignificant() : '')
-                    }}
-                    showMaxButton={true}
-                    currency={GOVERNANCE_TOKEN}
-                    // pair={dummyPair}
-                    label="Amount"
-                    disableCurrencySelect={true}
-                    customBalanceText={'Balance: '}
-                    id="stake-vote-token"
-                    hideSelect={true}
-                  />
-                </div>
-              )}
-              <TYPE.smallGray textAlign="center" style={{ color: '#f6f6f6' }}>
-                {selected === VoteOption.FOR ? contents?.agreeFor : contents?.againstFor}
-              </TYPE.smallGray>
-              {status === StatusOption.Live ? (
-                <ButtonPrimary width="320px" onClick={btnStatus.event} disabled={btnStatus.disable}>
-                  {btnStatus.text}
-                </ButtonPrimary>
-              ) : (
-                <ButtonPrimary width="320px" onClick={claimBtn.event} disabled={claimBtn.disable}>
-                  {claimBtn.text}
-                </ButtonPrimary>
-              )}
-            </AutoColumn>
-          </GradientCard>
-        </AutoColumn>
+        </Card>
+        <Card color={theme.bg1} marginTop={24}>
+          <Box style={{ maxWidth: 760, width: '100%' }} justifyContent="center" gridGap="40px" margin="0 auto">
+            <Card style={{ color: theme.text1 }}>
+              <AutoColumn gap="24px" style={{ maxWidth: 468, margin: '4px auto' }} justify="center">
+                <TYPE.mediumHeader textAlign="center">Make Your Decision</TYPE.mediumHeader>
+
+                <DirectionChangeWrapper style={{ padding: '0 20px', marginBottom: -15, fontSize: 12 }}>
+                  <span>My votes: {toNumber(userStaking.totalYes)}</span>
+                  <span>My votes: {toNumber(userStaking.totalNo)}</span>
+                </DirectionChangeWrapper>
+                <DirectionChangeWrapper style={{ padding: '0 20px' }}>
+                  <VoteOptionCard
+                    selected={selected === VoteOption.FOR}
+                    onClick={handleSelect(VoteOption.FOR)}
+                    disabled={disabled}
+                  >
+                    Vote For
+                    {status === StatusOption.Live && selected === VoteOption.FOR && (
+                      <TYPE.small>{Number(voteValue) ? voteValue : '-'} MATTER</TYPE.small>
+                    )}
+                  </VoteOptionCard>
+                  <VoteOptionCard
+                    selected={selected === VoteOption.AGAINST}
+                    onClick={handleSelect(VoteOption.AGAINST)}
+                    disabled={disabled}
+                  >
+                    Vote Against
+                    {status === StatusOption.Live && selected === VoteOption.AGAINST && (
+                      <TYPE.small>{Number(voteValue) ? voteValue : '-'} MATTER</TYPE.small>
+                    )}
+                  </VoteOptionCard>
+                </DirectionChangeWrapper>
+                {data.status === StatusOption.Live && (
+                  <div style={{ width: 'calc(100% - 40px)' }}>
+                    <CurrencyInputPanel
+                      value={voteValue}
+                      onUserInput={value => {
+                        setVoteValue(value)
+                      }}
+                      onMax={() => {
+                        setVoteValue(balance ? balance.toSignificant() : '')
+                      }}
+                      showMaxButton={true}
+                      currency={GOVERNANCE_TOKEN}
+                      // pair={dummyPair}
+                      label="Amount"
+                      disableCurrencySelect={true}
+                      customBalanceText={'Balance: '}
+                      id="stake-vote-token"
+                      hideSelect={true}
+                    />
+                  </div>
+                )}
+                <TYPE.smallGray textAlign="center">
+                  {selected === VoteOption.FOR ? contents?.agreeFor : contents?.againstFor}
+                </TYPE.smallGray>
+                {status === StatusOption.Live ? (
+                  <ButtonPrimary maxWidth="320px" onClick={btnStatus.event} disabled={btnStatus.disable}>
+                    {btnStatus.text}
+                  </ButtonPrimary>
+                ) : (
+                  <ButtonPrimary maxWidth="320px" onClick={claimBtn.event} disabled={claimBtn.disable}>
+                    {claimBtn.text}
+                  </ButtonPrimary>
+                )}
+              </AutoColumn>
+            </Card>
+          </Box>
+        </Card>
       </Wrapper>
       <Modal isOpen={NeutralSubmitted} onDismiss={handleNeutralDismiss}>
         <SubmittedModalContent submitType={submitType} onDismiss={handleNeutralDismiss} hash={txHash} />

@@ -59,14 +59,14 @@ export function colors(darkMode: boolean): Colors {
     advancedBG: 'rgba(255,255,255,0.6)',
 
     //primary colors
-    primary1: '#B2F355',
-    primary2: '#B2F355',
-    primary3: '#B2F355',
+    primary1: '#31B047',
+    primary2: '#31B047',
+    primary3: '#31B047',
     primary4: '#739A3B',
     primary5: '#2B3A14',
 
     // color text
-    primaryText1: '#B2F355',
+    primaryText1: '#31B047',
 
     // secondary colors
     secondary1: '#739A3B',
@@ -87,8 +87,8 @@ export function colors(darkMode: boolean): Colors {
     // blue5: darkMode ? '#153d6f70' : '#EBF4FF',
     translucent: 'rgba(255, 255, 255, 0.08)',
     gradient1:
-      '#000000 linear-gradient(283.31deg, rgba(255, 255, 255, 0.18) -2.53%, rgba(255, 255, 255, 0.17) 18.66%, rgba(255, 255, 255, 0) 98.68%)',
-    gradient2: '#000000 linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 100%)'
+      '#ffffff linear-gradient(283.31deg, rgba(255, 255, 255, 0.18) -2.53%, rgba(255, 255, 255, 0.17) 18.66%, rgba(255, 255, 255, 0) 98.68%)',
+    gradient2: '#ffffff linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 100%)'
   }
 }
 
@@ -140,7 +140,7 @@ export default function ThemeProvider({ children }: { children: React.ReactNode 
 }
 
 const TextWrapper = styled(Text)<{ color: keyof Colors }>`
-  color: ${({ color, theme }) => (theme as any)[color]};
+  color: ${({ color, theme }) => (theme as any)[color] ?? theme.text1};
 `
 
 export const TYPE = {
