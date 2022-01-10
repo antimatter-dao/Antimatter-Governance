@@ -149,9 +149,7 @@ export default function Governance() {
   const handleOpenCreation = useCallback(() => {
     setIsCreationOpen(true)
   }, [])
-  const handleCloseCreation = useCallback((e: React.SyntheticEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+  const handleCloseCreation = useCallback(() => {
     setIsCreationOpen(false)
   }, [])
 

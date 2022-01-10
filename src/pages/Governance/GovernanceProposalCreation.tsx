@@ -20,16 +20,14 @@ import { useTransactionAdder } from 'state/transactions/hooks'
 import { useApproveCallback, ApprovalState } from 'hooks/useApproveCallback'
 import { tryParseAmount } from 'state/swap/hooks'
 import { useGovernanceCreation } from 'hooks/useGovernanceDetail'
-import StaticOverlay from 'components/Modal/StaticOverlay'
 import { FACTORY_CHAIN_ID, GOVERNANCE_ADDRESS, MATTER_ADDRESS } from '../../constants'
 import { Dots } from 'components/swap/styleds'
+import Modal from 'components/Modal'
 
 const Wrapper = styled.div`
-  width: 920px;
-  border:1px solid ${({ theme }) => theme.bg3}
   margin-bottom: auto;
   max-width: 1280px;
-  border-radius: 32px; 
+  border-radius: 32px;
   padding: 29px 52px;
   display: flex;
   flex-direction: column;
@@ -38,7 +36,7 @@ const Wrapper = styled.div`
   margin: 30px 0;
   & > form {
     width: 100%;
-  };
+  }
   ${({ theme }) => theme.mediaWidth.upToSmall`
     padding: 0 24px;
     width: 100%;
@@ -80,13 +78,7 @@ const fields = {
   againstFor: 'Against'
 }
 
-export default function GovernanceProposalCreation({
-  onDismiss,
-  isOpen
-}: {
-  onDismiss: (e: React.SyntheticEvent) => void
-  isOpen: boolean
-}) {
+export default function GovernanceProposalCreation({ onDismiss, isOpen }: { onDismiss: () => void; isOpen: boolean }) {
   const [activeStep, setActiveStep] = useState(0)
   const [showConfirm, setShowConfirm] = useState(false)
   const [input, setInput] = useState<any>({ title: '', summary: '', agreeFor: '', againstFor: '' })
@@ -241,7 +233,7 @@ export default function GovernanceProposalCreation({
           <SubmittedModalContent onDismiss={handleDismissConfirmation} hash={txHash} isError={!!submitError} />
         )}
       />
-      <StaticOverlay isOpen={isOpen}>
+      <Modal isOpen={isOpen} onDismiss={onDismiss} maxWidth={1000}>
         <Wrapper>
           <form name="GovernanceCreationForm" id="GovernanceCreationForm" onSubmit={handleSubmit}>
             <AutoColumn gap="36px">
@@ -287,7 +279,7 @@ export default function GovernanceProposalCreation({
           </form>
           {/* {notEnoughBalance && <Warning>You must have {stakeAmount} MATTER to create a proposal</Warning>} */}
         </Wrapper>
-      </StaticOverlay>
+      </Modal>
     </>
   )
 }

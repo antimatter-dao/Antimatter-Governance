@@ -7,6 +7,7 @@ import '@reach/dialog/styles.css'
 import { useGesture } from 'react-use-gesture'
 import { transparentize } from 'polished'
 import { Marginer } from '../../pages/App'
+import { ShowSmall } from 'theme'
 // import { headerHeightDisplacement } from '../Header'
 
 const AnimatedDialogOverlay = animated(DialogOverlay)
@@ -70,7 +71,7 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
       css`
         min-width: ${minWidth}px;
       `}
-    overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'hidden')};
+    overflow-y: ${({ mobile }) => (mobile ? 'scroll' : 'scroll')};
     overflow-x: hidden;
 
     align-self: center;
@@ -91,7 +92,6 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
       css`
         min-height: ${minHeight}vh;
       `}
-    display: flex;
     border-radius: 42px;
     ${({ theme }) => theme.mediaWidth.upToMedium`
       width: 65vw;
@@ -104,7 +104,6 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
       border-bottom-left-radius: unset;
       border-bottom-right-radius: unset;
       overflow-y: auto;
-      
     `}
   }
 `
@@ -177,6 +176,10 @@ export default function Modal({
                   {/* prevents the automatic focusing of inputs on mobile by the reach dialog */}
                   {!initialFocusRef && isMobile ? <div tabIndex={1} /> : null}
                   {children}
+
+                  <ShowSmall>
+                    <div style={{ height: 70, width: '100%' }}></div>
+                  </ShowSmall>
                 </StyledDialogContent>
                 <Marginer />
               </Wrapper>
