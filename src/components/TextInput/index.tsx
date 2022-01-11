@@ -4,18 +4,20 @@ import { StyledInput } from 'components/NumericalInput'
 import { AutoRow } from 'components/Row'
 import { TYPE } from 'theme'
 import useTheme from 'hooks/useTheme'
+import { FormHelperText } from '@material-ui/core'
 
 const CustomInput = styled(StyledInput)<{ disabled?: boolean; error?: boolean }>`
   width: 100%;
   font-size: 16px;
-  color: ${({ theme, disabled }) => (disabled ? theme.bg5 : theme.white)};
+  color: ${({ theme, disabled }) => (disabled ? theme.bg5 : theme.text1)};
   align-items: center;
   padding: 0 0.5rem 0 1rem;
   width: 100%;
   background-color: ${({ theme, disabled }) => (disabled ? 'rgba(255, 255, 255, 0.08)' : theme.bg2)};
-  border-radius: 14px;
-  height: 3rem;
+  border-radius: 10px;
+  height: 60px;
   border: 1px solid ${({ theme, error }) => (error ? theme.red1 : 'transpanret')};
+  font-weight: 400;
 `
 
 export const CustomTextArea = styled.textarea<{ error?: boolean; fontSize?: string; align?: string }>`
@@ -61,6 +63,7 @@ export const TextInput = React.memo(function InnerInput({
   disabled,
   name,
   error,
+  formHelperText,
   ...rest
 }: {
   error?: boolean
@@ -68,6 +71,7 @@ export const TextInput = React.memo(function InnerInput({
   fontSize?: string
   align?: 'right' | 'left'
   textarea?: boolean
+  formHelperText?: string
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
   const theme = useTheme()
 
@@ -76,7 +80,7 @@ export const TextInput = React.memo(function InnerInput({
       <LabelRow>
         <AutoRow justify="space-between">
           {label && (
-            <TYPE.body color={theme.text3} fontWeight={500} fontSize={14}>
+            <TYPE.body color={theme.text3} fontWeight={400} fontSize={12}>
               {label}
             </TYPE.body>
           )}
@@ -104,6 +108,8 @@ export const TextInput = React.memo(function InnerInput({
           error={error}
         />
       )}
+
+      {formHelperText && <FormHelperText>{formHelperText}</FormHelperText>}
     </Container>
   )
 })

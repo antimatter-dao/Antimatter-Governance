@@ -23,28 +23,13 @@ import { useGovernanceCreation } from 'hooks/useGovernanceDetail'
 import { FACTORY_CHAIN_ID, GOVERNANCE_ADDRESS, MATTER_ADDRESS } from '../../constants'
 import { Dots } from 'components/swap/styleds'
 import Modal from 'components/Modal'
+import { Box } from '@material-ui/core'
 
-const Wrapper = styled.div`
-  margin-bottom: auto;
-  max-width: 1280px;
-  border-radius: 32px;
-  padding: 29px 52px;
-  display: flex;
-  flex-direction: column;
-  jusitfy-content: cetner;
-  align-items: center;
-  margin: 30px 0;
-  & > form {
-    width: 100%;
-  }
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 0 24px;
-    width: 100%;
-  `};
-  ${({ theme }) => theme.mediaWidth.upToLarge`
-  margin-bottom: 70px;
-  `};
-`
+enum FormSteps {
+  description = 'Proposal Description',
+  settings = 'Proposal Settings',
+  confirmation = 'Creation Monica Proposal'
+}
 
 // const Warning = styled.div`
 //   background-color: ${({ theme }) => theme.red1};
@@ -73,12 +58,13 @@ const stakeAmount = 100000
 const fields = {
   title: 'Title',
   details: 'Details',
-  summary: 'Summary',
+  description: 'Project Description',
   agreeFor: 'For',
   againstFor: 'Against'
 }
 
 export default function GovernanceProposalCreation({ onDismiss, isOpen }: { onDismiss: () => void; isOpen: boolean }) {
+  const [formStep, setFormStep] = useState(FormSteps.description)
   const [activeStep, setActiveStep] = useState(0)
   const [showConfirm, setShowConfirm] = useState(false)
   const [input, setInput] = useState<any>({ title: '', summary: '', agreeFor: '', againstFor: '' })
@@ -220,6 +206,89 @@ export default function GovernanceProposalCreation({ onDismiss, isOpen }: { onDi
     return ret
   }, [notEnoughBalance, chainId, approval, approveCallback])
 
+  const createForm = useMemo(() => {
+    if (formStep === FormSteps.description) {
+      return (
+        <>
+          <TextInput
+            label={fields.title}
+            placeholder="Enter your project name"
+            name="title"
+            formHelperText="Keep it below 10 words"
+          />
+          <TextInput
+            label={fields.description}
+            placeholder="What will be done if the proposal is implement"
+            name="description"
+            formHelperText="Keep it below 200 words"
+          />
+          <TextInput
+            label={fields.details}
+            placeholder="Write a Longer motivation with links and references if necessary"
+            name="details"
+            formHelperText="This is optional"
+          />
+          <ButtonPrimary onClick={() => setFormStep(FormSteps.settings)}>Next Step</ButtonPrimary>
+        </>
+      )
+    }
+
+    if (formStep === FormSteps.settings) {
+      return (
+        <>
+          <TYPE.smallHeader fontSize={22}>Proposal Settings</TYPE.smallHeader>
+          <TextInput label={fields.agreeFor} placeholder="Formulate clear for position" name="agreeFor" />
+          <TextInput label={fields.againstFor} placeholder="Formulate clear Against position" name="againstFor" />
+          <TYPE.smallHeader fontSize={22}>Proposal Timing</TYPE.smallHeader>
+          <TYPE.darkGray>Please set a time frame for the proposal. Select the number of days below</TYPE.darkGray>
+          {error && <TYPE.body color={theme.red1}>{error}</TYPE.body>}
+          <GovernanceTimeline activeStep={activeStep} onStep={handleStep} disabled={false} />
+
+          <Box display="flex" justifyContent="space-between" gridGap="16px">
+            <ButtonOutlinedPrimary onClick={() => setFormStep(FormSteps.description)}>Back</ButtonOutlinedPrimary>
+            <ButtonPrimary onClick={() => setFormStep(FormSteps.confirmation)}>Launch</ButtonPrimary>
+          </Box>
+        </>
+      )
+    }
+
+    return (
+      <>
+        <TYPE.smallHeader fontSize={20} fontWeight={400}>
+          Description
+        </TYPE.smallHeader>
+        <TYPE.body sx={{ opacity: 0.5 }}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+          est laborum.
+        </TYPE.body>
+        <TYPE.smallHeader fontSize={20} fontWeight={400}>
+          Detail
+        </TYPE.smallHeader>
+        <TYPE.body sx={{ opacity: 0.5 }}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+          est laborum.
+        </TYPE.body>
+        <TYPE.smallHeader fontSize={20} fontWeight={400}>
+          Proposal Settings
+        </TYPE.smallHeader>
+        <ButtonPrimary
+          type="submit"
+          onClick={btnStatus.event}
+          disabled={btnStatus.disable}
+          style={{ maxWidth: 416, margin: '0 auto' }}
+        >
+          {btnStatus.text}
+        </ButtonPrimary>
+      </>
+    )
+  }, [btnStatus, formStep])
+
   return (
     <>
       <TransactionConfirmationModal
@@ -233,52 +302,31 @@ export default function GovernanceProposalCreation({ onDismiss, isOpen }: { onDi
           <SubmittedModalContent onDismiss={handleDismissConfirmation} hash={txHash} isError={!!submitError} />
         )}
       />
-      <Modal isOpen={isOpen} onDismiss={onDismiss} maxWidth={1000}>
-        <Wrapper>
-          <form name="GovernanceCreationForm" id="GovernanceCreationForm" onSubmit={handleSubmit}>
-            <AutoColumn gap="36px">
-              <RowBetween>
-                <TYPE.largeHeader>Create a New Proposal</TYPE.largeHeader>
-                <ButtonEmpty width="auto" padding="0" onClick={onDismiss}>
-                  <X color={theme.text3} size={24} />
-                </ButtonEmpty>
-              </RowBetween>
-              <TYPE.smallHeader fontSize={22}>Proposal Description</TYPE.smallHeader>
-              <TextInput
-                label={fields.title}
-                placeholder="Enter your proposal name (Keep it Below 10 words)"
-                name="title"
-              />
-              <TextInput
-                label={fields.summary}
-                placeholder="What will be done if the proposal is implement (Keep it below 200 words)"
-                textarea
-                name="summary"
-              />
-              <TextInput
-                label={fields.details}
-                placeholder="Write a Longer motivation with links and references if necessary"
-                name="details"
-              />
-              <TYPE.smallHeader fontSize={22}>Proposal Settings</TYPE.smallHeader>
-              <TextInput label={fields.agreeFor} placeholder="Formulate clear for position" name="agreeFor" />
-              <TextInput label={fields.againstFor} placeholder="Formulate clear Against position" name="againstFor" />
-              <TYPE.smallHeader fontSize={22}>Proposal Timing</TYPE.smallHeader>
-              <TYPE.darkGray>Please set a time frame for the proposal. Select the number of days below</TYPE.darkGray>
-              <GovernanceTimeline activeStep={activeStep} onStep={handleStep} disabled={false} />
-              {error && <TYPE.body color={theme.red1}>{error}</TYPE.body>}
-              <ButtonPrimary
-                type="submit"
-                onClick={btnStatus.event}
-                disabled={btnStatus.disable}
-                style={{ maxWidth: 416, margin: '0 auto' }}
-              >
-                {btnStatus.text}
-              </ButtonPrimary>
-            </AutoColumn>
-          </form>
-          {/* {notEnoughBalance && <Warning>You must have {stakeAmount} MATTER to create a proposal</Warning>} */}
-        </Wrapper>
+      <Modal isOpen={isOpen} onDismiss={onDismiss} maxWidth={660}>
+        <Box position="relative">
+          <ButtonEmpty
+            width="auto"
+            padding="0"
+            onClick={onDismiss}
+            style={{ position: 'absolute', right: 20, top: 20 }}
+          >
+            <X color={theme.text3} size={24} />
+          </ButtonEmpty>
+          <Box padding="38px 60px 40px">
+            <form name="GovernanceCreationForm" id="GovernanceCreationForm" onSubmit={handleSubmit}>
+              <TYPE.smallHeader fontSize={12} mb={14} sx={{ opacity: 0.5 }}>
+                New Proposal Creation
+              </TYPE.smallHeader>
+              <Box>
+                <TYPE.largeHeader fontSize={40}>{formStep}</TYPE.largeHeader>
+              </Box>
+              <Box mt={'44px'} display="flex" flexDirection="column" gridGap={32}>
+                {createForm}
+              </Box>
+            </form>
+            {/* {notEnoughBalance && <Warning>You must have {stakeAmount} MATTER to create a proposal</Warning>} */}
+          </Box>
+        </Box>
       </Modal>
     </>
   )
