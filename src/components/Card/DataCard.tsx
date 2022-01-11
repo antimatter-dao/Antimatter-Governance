@@ -23,7 +23,7 @@ export function DataRow({ data: { title, content }, rowHeight }: { data: DataTyp
 export default function DataCard({
   data,
   cardTitle,
-  bgColor = 'rgba(0,0,0,.2)',
+  bgColor = 'transparent',
   cardBottom,
   rowHeight
 }: {

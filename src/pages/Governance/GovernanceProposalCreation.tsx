@@ -40,6 +40,13 @@ enum FormSteps {
 //   text-align: center;
 // `
 
+const FormWrapper = styled(Box)`
+  padding: 38px 60px 40px;
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+  padding:20px
+  `}
+`
+
 const ModalButtonWrapper = styled(RowBetween)`
   margin-top: 14px;
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -82,6 +89,7 @@ export default function GovernanceProposalCreation({ onDismiss, isOpen }: { onDi
     account ?? undefined,
     chainId ? new Token(chainId, MATTER_ADDRESS, 18) : undefined
   )
+
   const notEnoughBalance = !balance?.greaterThan(JSBI.BigInt(stakeAmount))
 
   const [approval, approveCallback] = useApproveCallback(
@@ -98,24 +106,49 @@ export default function GovernanceProposalCreation({ onDismiss, isOpen }: { onDi
     setTxHash('')
   }, [])
 
-  const handleSubmit = useCallback(e => {
-    e.preventDefault()
-    const formData = new FormData(e.target).entries()
-    const input: { [key: string]: any } = {}
-    let error = ''
-    for (const pair of formData) {
-      if (!pair[1]) {
-        error += ', ' + fields[pair[0] as keyof typeof fields]
+  const handleSubmit = useCallback(
+    e => {
+      e.preventDefault()
+      if (formStep === FormSteps.confirmation) {
+        setFormStep(FormSteps.confirmation)
+        setShowConfirm(true)
+        return
       }
-      input[pair[0]] = pair[1]
-    }
-    setError(error ? 'Following fields are incomplete:' + error.slice(1) : '')
+      const formData = new FormData(e.target).entries()
+      const tempInput: { [key: string]: any } = {}
+      let error = ''
+      for (const pair of formData) {
+        if (!pair[1]) {
+          error += ', ' + fields[pair[0] as keyof typeof fields]
+        }
+        tempInput[pair[0]] = pair[1]
+      }
+      setError(error ? error.slice(1) + ' incomplete' : '')
+      if (!error) {
+        if (formStep === FormSteps.description) {
+          setFormStep(FormSteps.settings)
+          e.target.querySelectorAll('input').forEach((item: any) => {
+            item.value = ''
+          })
+        }
+        if (formStep === FormSteps.settings) {
+          setFormStep(FormSteps.confirmation)
+        }
 
-    if (!error) {
-      setShowConfirm(true)
-      setInput(input)
-    }
-  }, [])
+        setInput((prev: any) => ({ ...prev, ...tempInput }))
+      }
+    },
+    [formStep]
+  )
+
+  const handleDismiss = useCallback(() => {
+    setError('')
+    setFormStep(FormSteps.description)
+    setInput({ title: '', summary: '', agreeFor: '', againstFor: '' })
+    setSubmitError('')
+    setActiveStep(0)
+    onDismiss()
+  }, [onDismiss])
 
   const onCreate = useCallback(async () => {
     if (!governanceCreateCallback) return
@@ -151,10 +184,10 @@ export default function GovernanceProposalCreation({ onDismiss, isOpen }: { onDi
       .catch(error => {
         setAttemptingTxn(false)
         setTxHash('error')
-        if (error?.code !== 4001) {
-          setSubmitError(error)
-          console.error('---->', error)
-        }
+        // if (error?.code !== 4001) {
+        setSubmitError(error)
+        console.error('---->', error)
+        // }
       })
   }, [activeStep, addTransaction, approval, governanceCreateCallback, chainId, input])
 
@@ -228,7 +261,7 @@ export default function GovernanceProposalCreation({ onDismiss, isOpen }: { onDi
             name="details"
             formHelperText="This is optional"
           />
-          <ButtonPrimary onClick={() => setFormStep(FormSteps.settings)}>Next Step</ButtonPrimary>
+          <ButtonPrimary type="submit">Next Step</ButtonPrimary>
         </>
       )
     }
@@ -241,12 +274,12 @@ export default function GovernanceProposalCreation({ onDismiss, isOpen }: { onDi
           <TextInput label={fields.againstFor} placeholder="Formulate clear Against position" name="againstFor" />
           <TYPE.smallHeader fontSize={22}>Proposal Timing</TYPE.smallHeader>
           <TYPE.darkGray>Please set a time frame for the proposal. Select the number of days below</TYPE.darkGray>
-          {error && <TYPE.body color={theme.red1}>{error}</TYPE.body>}
+
           <GovernanceTimeline activeStep={activeStep} onStep={handleStep} disabled={false} />
 
           <Box display="flex" justifyContent="space-between" gridGap="16px">
             <ButtonOutlinedPrimary onClick={() => setFormStep(FormSteps.description)}>Back</ButtonOutlinedPrimary>
-            <ButtonPrimary onClick={() => setFormStep(FormSteps.confirmation)}>Launch</ButtonPrimary>
+            <ButtonPrimary type="submit">Launch</ButtonPrimary>
           </Box>
         </>
       )
@@ -254,40 +287,59 @@ export default function GovernanceProposalCreation({ onDismiss, isOpen }: { onDi
 
     return (
       <>
-        <TYPE.smallHeader fontSize={20} fontWeight={400}>
-          Description
-        </TYPE.smallHeader>
-        <TYPE.body sx={{ opacity: 0.5 }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-          est laborum.
-        </TYPE.body>
-        <TYPE.smallHeader fontSize={20} fontWeight={400}>
-          Detail
-        </TYPE.smallHeader>
-        <TYPE.body sx={{ opacity: 0.5 }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-          consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-          est laborum.
-        </TYPE.body>
-        <TYPE.smallHeader fontSize={20} fontWeight={400}>
-          Proposal Settings
-        </TYPE.smallHeader>
+        <AutoColumn gap="16px">
+          <TYPE.smallHeader fontSize={20} fontWeight={400}>
+            Description
+          </TYPE.smallHeader>
+          <TYPE.body sx={{ opacity: 0.5 }}>{input.description}</TYPE.body>
+        </AutoColumn>
+        <AutoColumn gap="16px">
+          <TYPE.smallHeader fontSize={20} fontWeight={400}>
+            Detail
+          </TYPE.smallHeader>
+          <TYPE.body sx={{ opacity: 0.5 }}>{input.details}</TYPE.body>
+        </AutoColumn>
+        <AutoColumn gap="16px">
+          <TYPE.smallHeader fontSize={20} fontWeight={400}>
+            Proposal Settings
+          </TYPE.smallHeader>
+          <AutoColumn style={{ fontWeight: 400 }} gap="20px">
+            <RowBetween>
+              <TYPE.darkGray fontWeight={400}>For</TYPE.darkGray>
+              <TYPE.body>{input.agreeFor}</TYPE.body>
+            </RowBetween>
+            <RowBetween>
+              <TYPE.darkGray fontWeight={400}>Against</TYPE.darkGray>
+              <TYPE.body>{input.againstFor}</TYPE.body>
+            </RowBetween>
+            <RowBetween>
+              <TYPE.darkGray fontWeight={400}>Proposal Timing</TYPE.darkGray>
+              <TYPE.body>{activeStep + 3 + ' Days'}</TYPE.body>
+            </RowBetween>
+          </AutoColumn>
+        </AutoColumn>
         <ButtonPrimary
           type="submit"
           onClick={btnStatus.event}
-          disabled={btnStatus.disable}
+          disabled={btnStatus.disable || !!txHash}
           style={{ maxWidth: 416, margin: '0 auto' }}
         >
           {btnStatus.text}
         </ButtonPrimary>
       </>
     )
-  }, [btnStatus, formStep])
+  }, [
+    activeStep,
+    btnStatus.disable,
+    btnStatus.event,
+    btnStatus.text,
+    formStep,
+    input.againstFor,
+    input.agreeFor,
+    input.description,
+    input.details,
+    txHash
+  ])
 
   return (
     <>
@@ -302,17 +354,17 @@ export default function GovernanceProposalCreation({ onDismiss, isOpen }: { onDi
           <SubmittedModalContent onDismiss={handleDismissConfirmation} hash={txHash} isError={!!submitError} />
         )}
       />
-      <Modal isOpen={isOpen} onDismiss={onDismiss} maxWidth={660}>
+      <Modal isOpen={isOpen} onDismiss={handleDismiss} maxWidth={660} minHeight={70}>
         <Box position="relative">
           <ButtonEmpty
             width="auto"
             padding="0"
-            onClick={onDismiss}
+            onClick={handleDismiss}
             style={{ position: 'absolute', right: 20, top: 20 }}
           >
             <X color={theme.text3} size={24} />
           </ButtonEmpty>
-          <Box padding="38px 60px 40px">
+          <FormWrapper>
             <form name="GovernanceCreationForm" id="GovernanceCreationForm" onSubmit={handleSubmit}>
               <TYPE.smallHeader fontSize={12} mb={14} sx={{ opacity: 0.5 }}>
                 New Proposal Creation
@@ -320,12 +372,18 @@ export default function GovernanceProposalCreation({ onDismiss, isOpen }: { onDi
               <Box>
                 <TYPE.largeHeader fontSize={40}>{formStep}</TYPE.largeHeader>
               </Box>
+
               <Box mt={'44px'} display="flex" flexDirection="column" gridGap={32}>
                 {createForm}
               </Box>
+              {
+                <TYPE.body color={theme.red1} style={{ display: error ? 'block' : 'none', marginTop: 12 }}>
+                  {error}
+                </TYPE.body>
+              }
             </form>
             {/* {notEnoughBalance && <Warning>You must have {stakeAmount} MATTER to create a proposal</Warning>} */}
-          </Box>
+          </FormWrapper>
         </Box>
       </Modal>
     </>
@@ -453,7 +511,7 @@ function SubmittedModalContent({
         <TYPE.body fontWeight={400} fontSize={18} textAlign="center">
           {isError ? (
             <>
-              There is a unexpected error, <br /> please try again
+              Create proposal failed, <br /> please try again
             </>
           ) : (
             <>

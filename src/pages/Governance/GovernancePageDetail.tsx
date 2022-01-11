@@ -490,12 +490,15 @@ export default function GovernancePageDetail({
 
                 <DirectionChangeWrapper style={{ padding: '0 20px', marginBottom: -15, fontSize: 12 }}>
                   <span>My votes: {toNumber(userStaking.totalYes)}</span>
-                  <span>My votes: {toNumber(userStaking.totalNo)}</span>
+                  <HideSmall>
+                    <span>My votes: {toNumber(userStaking.totalNo)}</span>
+                  </HideSmall>
                 </DirectionChangeWrapper>
+
                 <DirectionChangeWrapper style={{ padding: '0 20px' }}>
                   <VoteOptionCard
                     selected={selected === VoteOption.FOR}
-                    onClick={handleSelect(VoteOption.FOR)}
+                    onClick={disabled ? undefined : handleSelect(VoteOption.FOR)}
                     disabled={disabled}
                   >
                     Vote For
@@ -503,9 +506,12 @@ export default function GovernancePageDetail({
                       <TYPE.small>{Number(voteValue) ? voteValue : '-'} MATTER</TYPE.small>
                     )}
                   </VoteOptionCard>
+                  <ShowSmall>
+                    <span style={{ fontSize: 12, marginTop: 20 }}>My votes: {toNumber(userStaking.totalNo)}</span>
+                  </ShowSmall>
                   <VoteOptionCard
                     selected={selected === VoteOption.AGAINST}
-                    onClick={handleSelect(VoteOption.AGAINST)}
+                    onClick={disabled ? undefined : handleSelect(VoteOption.AGAINST)}
                     disabled={disabled}
                   >
                     Vote Against
@@ -535,9 +541,11 @@ export default function GovernancePageDetail({
                     />
                   </div>
                 )}
-                <TYPE.smallGray textAlign="center">
-                  {selected === VoteOption.FOR ? contents?.agreeFor : contents?.againstFor}
-                </TYPE.smallGray>
+                {!disabled && (
+                  <TYPE.smallGray textAlign="center">
+                    {selected === VoteOption.FOR ? contents?.agreeFor : contents?.againstFor}
+                  </TYPE.smallGray>
+                )}
                 {status === StatusOption.Live ? (
                   <ButtonPrimary maxWidth="320px" onClick={btnStatus.event} disabled={btnStatus.disable}>
                     {btnStatus.text}

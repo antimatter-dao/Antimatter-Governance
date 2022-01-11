@@ -65,7 +65,7 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
     background: ${({ theme }) => theme.gradient1};
     box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
     padding: 0px;
-    width: 42vw;
+    width: 90vw;
     ${({ minWidth }) =>
       minWidth &&
       css`
@@ -104,6 +104,7 @@ export const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpe
       border-bottom-left-radius: unset;
       border-bottom-right-radius: unset;
       overflow-y: auto;
+      max-height:calc(100vh - ${({ theme }: any) => theme.headerHeight} - 20px)
     `}
   }
 `
